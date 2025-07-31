@@ -1,0 +1,17 @@
+/.vscode
+/__pycache__
+/build
+/dist
+/node_modules/
+*.log
+.claude
+.codebuddy
+biorhythm_env/*
+biorhythm_env/Lib/site-packages/*
+frontend/node_modules/*
+frontend/node_modules/.bin/*
+backend/utils/__pycache__/*
+biorhythm_env/Lib/site-packages/wheel/cli/__pycache__/__init__.cpython-312.pyc
+backend/services/__pycache__/*
+backend/services/__pycache__/biorhythm_service.cpython-312.pyc
+backend/services/__pycache__/biorhythm_service.cpython-39.pyc

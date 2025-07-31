@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* 导航栏样式优化 */
+.nav-tabs {
+  @apply flex border-b border-gray-200 mb-5 mt-0;
+}
+
+.nav-tab {
+  @apply py-3 px-6 text-base font-medium focus:outline-none transition-colors duration-200;
+}
+
+.nav-tab-active {
+  @apply border-b-2 border-blue-500 text-blue-600;
+}
+
+.nav-tab-inactive {
+  @apply text-gray-500 hover:text-gray-700 hover:border-gray-300;
+}
+
+/* 页面标题栏样式 */
+.page-header {
+  @apply bg-white shadow-sm mb-5;
+}
+
+.page-title {
+  @apply text-3xl font-bold text-gray-900 py-6;
+}
+
+/* 内容区域样式 */
+.content-section {
+  @apply px-4 py-5 sm:px-0;
+}
