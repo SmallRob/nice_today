@@ -1,8 +1,6 @@
 import axios from 'axios';
 
 // 格式化日期为YYYY-MM-DD，确保时区一致
-
-// 格式化日期为YYYY-MM-DD，确保时区一致
 export const formatDateString = (date) => {
   if (!date) return null;
   const year = date.getFullYear();
@@ -418,3 +416,230 @@ export const fetchSpecificDateDressInfo = async (apiBaseUrl, dateStr) => {
     };
   }
 };
+
+// 获取玛雅出生图信息
+export const fetchMayaBirthInfo = async (apiBaseUrl, birthDateStr) => {
+  if (!birthDateStr) {
+    return {
+      success: false,
+      error: "请选择出生日期"
+    };
+  }
+
+  // 创建通用的请求配置
+  const axiosConfig = {
+    timeout: 8000,
+    headers: {
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache'
+    }
+  };
+
+  try {
+    console.log("正在请求玛雅出生图信息:", `${apiBaseUrl}/maya/birth?birth_date=${birthDateStr}`);
+    const response = await axios.get(`${apiBaseUrl}/maya/birth`, {
+      params: { birth_date: birthDateStr },
+      ...axiosConfig
+    });
+    
+    return {
+      success: true,
+      birthInfo: response.data
+    };
+  } catch (err) {
+    console.error(`获取玛雅出生图信息失败:`, err);
+    
+    // 尝试使用备用API路径
+    try {
+      console.log(`尝试使用备用API路径获取玛雅出生图信息...`);
+      const altResponse = await axios.get(`${apiBaseUrl}/api/maya/birth`, {
+        params: { birth_date: birthDateStr },
+        ...axiosConfig
+      });
+      
+      return {
+        success: true,
+        birthInfo: altResponse.data
+      };
+    } catch (altErr) {
+      console.error(`使用备用API路径获取玛雅出生图信息失败:`, altErr);
+      
+      // 如果是生产环境，尝试使用相对路径
+      if (process.env.NODE_ENV === 'production') {
+        try {
+          console.log(`尝试使用相对路径获取玛雅出生图信息...`);
+          const relativeResponse = await axios.get(`/maya/birth`, {
+            params: { birth_date: birthDateStr },
+            ...axiosConfig
+          });
+          
+          return {
+            success: true,
+            birthInfo: relativeResponse.data
+          };
+        } catch (relativeErr) {
+          console.error(`使用相对路径获取玛雅出生图信息失败:`, relativeErr);
+        }
+      }
+    }
+    
+    return {
+      success: false,
+      error: `获取玛雅出生图信息失败，请稍后再试`
+    };
+  }
+};
+
+// 获取玛雅日历范围数据
+export const fetchMayaCalendarRange = async (apiBaseUrl) => {
+  // 创建通用的请求配置
+  const axiosConfig = {
+    timeout: 8000,
+    headers: {
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache'
+    }
+  };
+
+  try {
+    console.log("正在请求玛雅日历范围API:", `${apiBaseUrl}/maya/range`);
+    const response = await axios.get(`${apiBaseUrl}/maya/range`, {
+      params: {
+        days_before: 3,  // 前3天
+        days_after: 3    // 后3天
+      },
+      ...axiosConfig
+    });
+    
+    return {
+      success: true,
+      mayaInfoList: response.data.maya_info_list,
+      dateRange: {
+        start: new Date(response.data.date_range.start),
+        end: new Date(response.data.date_range.end)
+      }
+    };
+  } catch (err) {
+    console.error("获取玛雅日历范围失败:", err);
+    
+    // 尝试使用备用API路径
+    try {
+      console.log("尝试使用备用API路径获取玛雅日历范围...");
+      const altResponse = await axios.get(`${apiBaseUrl}/api/maya/range`, {
+        params: {
+          days_before: 3,
+          days_after: 3
+        },
+        ...axiosConfig
+      });
+      
+      return {
+        success: true,
+        mayaInfoList: altResponse.data.maya_info_list,
+        dateRange: {
+          start: new Date(altResponse.data.date_range.start),
+          end: new Date(altResponse.data.date_range.end)
+        }
+      };
+    } catch (altErr) {
+      console.error("使用备用API路径获取玛雅日历范围也失败:", altErr);
+      
+      // 如果是生产环境，尝试使用相对路径
+      if (process.env.NODE_ENV === 'production') {
+        try {
+          console.log("尝试使用相对路径获取玛雅日历范围...");
+          const relativeResponse = await axios.get(`/maya/range`, {
+            params: {
+              days_before: 3,
+              days_after: 3
+            },
+            ...axiosConfig
+          });
+          
+          return {
+            success: true,
+            mayaInfoList: relativeResponse.data.maya_info_list,
+            dateRange: {
+              start: new Date(relativeResponse.data.date_range.start),
+              end: new Date(relativeResponse.data.date_range.end)
+            }
+          };
+        } catch (relativeErr) {
+          console.error("使用相对路径获取玛雅日历范围失败:", relativeErr);
+        }
+      }
+      
+      return {
+        success: false,
+        error: "获取玛雅日历范围失败，请稍后再试"
+      };
+    }
+  }
+};
+
+// 获取特定日期的玛雅日历信息
+export const fetchSpecificDateMayaInfo = async (apiBaseUrl, dateStr) => {
+  // 创建通用的请求配置
+  const axiosConfig = {
+    timeout: 8000,
+    headers: {
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache'
+    }
+  };
+  
+  try {
+    console.log("正在请求特定日期玛雅日历信息:", `${apiBaseUrl}/maya/date?date=${dateStr}`);
+    const response = await axios.get(`${apiBaseUrl}/maya/date`, {
+      params: { date: dateStr },
+      ...axiosConfig
+    });
+    
+    return {
+      success: true,
+      mayaInfo: response.data
+    };
+  } catch (err) {
+    console.error(`获取${dateStr}的玛雅日历信息失败:`, err);
+    
+    // 尝试使用备用API路径
+    try {
+      console.log(`尝试使用备用API路径获取${dateStr}的玛雅日历信息...`);
+      const altResponse = await axios.get(`${apiBaseUrl}/api/maya/date`, {
+        params: { date: dateStr },
+        ...axiosConfig
+      });
+      
+      return {
+        success: true,
+        mayaInfo: altResponse.data
+      };
+    } catch (altErr) {
+      console.error(`使用备用API路径获取${dateStr}的玛雅日历信息失败:`, altErr);
+      
+      // 如果是生产环境，尝试使用相对路径
+      if (process.env.NODE_ENV === 'production') {
+        try {
+          console.log(`尝试使用相对路径获取${dateStr}的玛雅日历信息...`);
+          const relativeResponse = await axios.get(`/maya/date`, {
+            params: { date: dateStr },
+            ...axiosConfig
+          });
+          
+          return {
+            success: true,
+            mayaInfo: relativeResponse.data
+          };
+        } catch (relativeErr) {
+          console.error(`使用相对路径获取${dateStr}的玛雅日历信息失败:`, relativeErr);
+        }
+      }
+      
+      return {
+        success: false,
+        error: `获取${dateStr}的玛雅日历信息失败，请稍后再试`
+      };
+    }
+  }
+};
+

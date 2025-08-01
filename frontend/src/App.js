@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import BiorhythmTab from './components/BiorhythmTab';
 import DressInfo from './components/DressInfo';
+import MayaCalendar from './components/MayaCalendar';
+import MayaBirthChart from './components/MayaBirthChart';
 import { testApiConnection } from './services/apiService';
 import niceDayLogo from './images/nice_day.png';
 
 // 动态获取API基础URL
 const getApiBaseUrl = () => {
   if (process.env.NODE_ENV === 'production') {
-    // 统一使用 /api 路径，这是nginx配置的API代理路径
-    return `/api`;
+    console.log("生产环境：使用环境变量配置的域名访问API");
+    
+    // 使用环境变量配置的域名，如果没有则使用当前域名
+    const apiDomain = process.env.REACT_APP_API_DOMAIN || '';
+    return `${apiDomain}/api`;
   } else {
-    const backendPort = process.env.REACT_APP_BACKEND_PORT || 5020;
+    // 开发环境中使用本地地址
+    const backendPort = process.env.REACT_APP_BACKEND_PORT || 5001;
+    console.log("开发环境：使用后端端口:", backendPort);
     return `http://localhost:${backendPort}`;
   }
 };
 
 function App() {
-  const [activeTab, setActiveTab] = useState('biorhythm'); // 'biorhythm' 或 'dressInfo'
+  const [activeTab, setActiveTab] = useState('biorhythm'); // 'biorhythm', 'dressInfo' 或 'mayaCalendar'
   const [apiBaseUrl, setApiBaseUrl] = useState("");
   const [apiConnected, setApiConnected] = useState(false);
   // 保留 setError 用于错误处理，但在 UI 中显示错误信息
@@ -95,6 +102,18 @@ function App() {
             >
               穿衣与饮食指南
             </button>
+            <button
+              className={`nav-tab ${activeTab === 'mayaCalendar' ? 'nav-tab-active' : 'nav-tab-inactive'}`}
+              onClick={() => setActiveTab('mayaCalendar')}
+            >
+              玛雅日历
+            </button>
+            <button
+              className={`nav-tab ${activeTab === 'mayaBirthChart' ? 'nav-tab-active' : 'nav-tab-inactive'}`}
+              onClick={() => setActiveTab('mayaBirthChart')}
+            >
+              玛雅出生图
+            </button>
           </div>
 
           {/* 标签页内容 */}
@@ -104,6 +123,14 @@ function App() {
 
           {activeTab === 'dressInfo' && (
             <DressInfo apiBaseUrl={apiBaseUrl} />
+          )}
+          
+          {activeTab === 'mayaCalendar' && (
+            <MayaCalendar apiBaseUrl={apiBaseUrl} />
+          )}
+          
+          {activeTab === 'mayaBirthChart' && (
+            <MayaBirthChart apiBaseUrl={apiBaseUrl} />
           )}
         </div>
       </main>
