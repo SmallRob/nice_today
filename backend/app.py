@@ -171,5 +171,21 @@ app.include_router(dress_router)
 
 if __name__ == '__main__':
     # 从环境变量获取端口，默认为5000
-    port = int(os.environ.get('FLASK_RUN_PORT', 5000))
+    port_str = os.environ.get('FLASK_RUN_PORT', '5000')
+    
+    # 处理可能包含额外文本的端口字符串
+    try:
+        # 尝试直接解析为整数
+        port = int(port_str)
+    except ValueError:
+        # 如果解析失败，尝试提取字符串中的数字部分
+        import re
+        port_match = re.search(r'\d+', port_str)
+        if port_match:
+            port = int(port_match.group())
+        else:
+            # 如果无法提取数字，使用默认端口5000
+            port = 5000
+        print(f"警告: 端口值格式不正确，使用提取的端口: {port}")
+    
     uvicorn.run(app, host="0.0.0.0", port=port)

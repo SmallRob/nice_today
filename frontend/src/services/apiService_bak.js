@@ -39,7 +39,7 @@ export const testApiConnection = async (baseUrl) => {
     console.error("API连接失败:", err);
     
     // 获取当前页面的协议和主机名
-    // const origin = window.location.origin;
+    const origin = window.location.origin;
     
     // 如果是生产环境，尝试使用标准化的API路径
     if (process.env.NODE_ENV === 'production') {
@@ -197,7 +197,7 @@ export const fetchBiorhythmData = async (apiBaseUrl, birthDate) => {
     console.log("正在请求API:", apiBaseUrl, "出生日期:", birthDateStr);
     
     // 定义可能的API路径前缀
-      // const possiblePrefixes = ['', '/api'];
+    const possiblePrefixes = ['', '/api'];
     
     // 尝试使用标准路径
     try {
@@ -557,37 +557,20 @@ export const fetchMayaCalendarRange = async (apiBaseUrl) => {
   
   // 如果是生产环境，尝试使用相对路径
   if (process.env.NODE_ENV === 'production') {
-    const relativePaths = ['/maya/today', '/api/maya/today', '/maya/range', '/api/maya/range'];
+    const relativePaths = ['/maya/today', '/api/maya/today'];
     for (const path of relativePaths) {
       try {
         console.log("尝试使用相对路径获取玛雅日历信息:", path);
-        const relativeResponse = await axios.get(path, {
-          params: path.includes('range') ? {
-            days_before: 3,  // 前3天
-            days_after: 3    // 后3天
-          } : {},
-          ...axiosConfig
-        });
+        const relativeResponse = await axios.get(path, axiosConfig);
         
-        if (path.includes('range')) {
-          return {
-            success: true,
-            mayaInfoList: relativeResponse.data.maya_info_list,
-            dateRange: {
-              start: new Date(relativeResponse.data.date_range.start),
-              end: new Date(relativeResponse.data.date_range.end)
-            }
-          };
-        } else {
-          return {
-            success: true,
-            mayaInfoList: [relativeResponse.data],
-            dateRange: {
-              start: new Date(),
-              end: new Date()
-            }
-          };
-        }
+        return {
+          success: true,
+          mayaInfoList: [relativeResponse.data],
+          dateRange: {
+            start: new Date(),
+            end: new Date()
+          }
+        };
       } catch (relativeErr) {
         console.error(`使用相对路径 ${path} 获取玛雅日历信息失败:`, relativeErr);
       }
@@ -596,62 +579,42 @@ export const fetchMayaCalendarRange = async (apiBaseUrl) => {
   
   // 所有尝试都失败，返回模拟数据以便前端开发
   console.log("所有API尝试失败，返回模拟数据");
-  
-  // 生成7天的模拟数据
-  const generateMockData = (daysOffset) => {
-    const date = new Date();
-    date.setDate(date.getDate() + daysOffset);
-    const dateStr = formatDateString(date);
-    const weekday = "星期" + "日一二三四五六".charAt(date.getDay());
-    
-    const mayaSeals = ["红龙", "白风", "蓝夜", "黄种子", "红蛇", "白世界连接者", "蓝手", "黄星星", "红月亮", "白狗", "蓝猴", "黄人", "红天空行者", "白巫师", "蓝鹰", "黄战士", "红地球", "白镜子", "蓝风暴", "黄太阳"];
-    const mayaTones = ["磁性之月", "月亮之月", "电子之月", "自我存在之月", "倍音之月", "韵律之月", "共振之月", "银河之月", "太阳之月", "行星之月", "光谱之月", "水晶之月", "宇宙之月"];
-    const luckyColors = ["银色", "蓝色", "绿色", "红色", "黄色", "紫色", "白色", "黑色"];
-    const luckyFoods = ["牛奶", "苹果", "坚果", "蜂蜜", "绿茶", "燕麦", "香蕉", "红枣", "山药", "莲子"];
-    
-    return {
-      date: dateStr,
-      weekday: weekday,
-      maya_kin: "KIN" + (Math.floor(Math.random() * 260) + 1),
-      maya_tone: mayaTones[Math.floor(Math.random() * mayaTones.length)] + " | 第" + (Math.floor(Math.random() * 28) + 1) + "天",
-      maya_seal: mayaSeals[Math.floor(Math.random() * mayaSeals.length)],
-      maya_seal_desc: mayaTones[Math.floor(Math.random() * mayaTones.length)].replace('之月', '的') + mayaSeals[Math.floor(Math.random() * mayaSeals.length)],
-      suggestions: {
-        建议: ["发现万物之美", "泡茶读书", "双重保障", "冥想", "户外活动", "创作艺术"],
-        避免: ["苛求完美", "顺其自然", "头脑混乱", "过度消费", "情绪化决策"]
-      },
-      lucky_items: {
-        幸运色: luckyColors[Math.floor(Math.random() * luckyColors.length)],
-        幸运数字: Math.floor(Math.random() * 10) + ", " + Math.floor(Math.random() * 10),
-        幸运食物: luckyFoods[Math.floor(Math.random() * luckyFoods.length)]
-      },
-      daily_message: "没有人的人生是完美的，但生命的每一刻都是美丽的。",
-      daily_quote: {
-        content: "《美丽人生》",
-        author: "罗伯托·贝尼尼"
-      },
-      energy_scores: {
-        综合: Math.floor(Math.random() * 40) + 60,
-        爱情: Math.floor(Math.random() * 40) + 60,
-        财富: Math.floor(Math.random() * 40) + 60,
-        事业: Math.floor(Math.random() * 40) + 60,
-        学习: Math.floor(Math.random() * 40) + 60
-      }
-    };
-  };
-  
-  // 生成7天的数据（前3天 + 今天 + 后3天）
-  const mockData = [];
-  for (let i = -3; i <= 3; i++) {
-    mockData.push(generateMockData(i));
-  }
-  
   return {
     success: true,
-    mayaInfoList: mockData,
+    mayaInfoList: [
+      {
+        date: formatDateString(new Date()),
+        weekday: "星期" + "日一二三四五六".charAt(new Date().getDay()),
+        maya_kin: "KIN128",
+        maya_tone: "磁性之月 | 第5天",
+        maya_seal: "黄星星",
+        maya_seal_desc: "光谱的黄星星",
+        suggestions: {
+          建议: ["发现万物之美", "泡茶读书", "双重保障"],
+          避免: ["苛求完美", "顺其自然", "头脑混乱"]
+        },
+        lucky_items: {
+          幸运色: "银色",
+          幸运数字: "0, 7",
+          幸运食物: "牛奶"
+        },
+        daily_message: "没有人的人生是完美的，但生命的每一刻都是美丽的。",
+        daily_quote: {
+          content: "《美丽人生》",
+          author: "罗伯托·贝尼尼"
+        },
+        energy_scores: {
+          综合: 66,
+          爱情: 71,
+          财富: 62,
+          事业: 74,
+          学习: 60
+        }
+      }
+    ],
     dateRange: {
-      start: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-      end: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+      start: new Date(),
+      end: new Date()
     }
   };
 };
@@ -691,14 +654,12 @@ export const fetchSpecificDateMayaInfo = async (apiBaseUrl, dateStr) => {
   
   // 如果是生产环境，尝试使用相对路径
   if (process.env.NODE_ENV === 'production') {
-    const relativePaths = ['/maya/date', '/api/maya/date', '/maya/today', '/api/maya/today'];
+    const relativePaths = ['/maya/date', '/api/maya/date'];
     for (const path of relativePaths) {
       try {
-        // 如果是today路径，不需要传递date参数
-        const params = path.includes('date') ? { date: dateStr } : {};
         console.log(`尝试使用相对路径获取${dateStr}的玛雅日历信息:`, path);
         const relativeResponse = await axios.get(path, {
-          params,
+          params: { date: dateStr },
           ...axiosConfig
         });
         
@@ -758,35 +719,40 @@ export const fetchMayaHistory = async (apiBaseUrl) => {
     }
   };
   
-  // 定义可能的API路径前缀
-  const possiblePrefixes = ['', '/api', '/maya'];
-  
-  // 依次尝试不同的API路径前缀
-  for (const prefix of possiblePrefixes) {
+  try {
+    // 首先尝试新版API路径
+    const response = await axios.get(`${apiBaseUrl}/maya/history`, axiosConfig);
+    if (response.data && response.data.history) {
+      return {
+        success: true,
+        history: response.data.history
+      };
+    }
+    
+    return {
+      success: false,
+      error: "获取历史记录失败：API返回无效数据"
+    };
+  } catch (err) {
+    console.error("获取玛雅历史记录失败:", err);
+    
+    // 尝试旧版API路径
     try {
-      const url = `${apiBaseUrl}${prefix}/maya/history`;
-      console.log("正在请求玛雅历史记录API:", url);
-      const response = await axios.get(url, axiosConfig);
-      
-      if (response.data && response.data.history) {
+      const oldResponse = await axios.get(`${apiBaseUrl}/api/maya/history`, axiosConfig);
+      if (oldResponse.data && oldResponse.data.history) {
         return {
           success: true,
-          history: response.data.history
+          history: oldResponse.data.history
         };
       }
-    } catch (err) {
-      console.error(`使用前缀 ${prefix} 获取玛雅历史记录失败:`, err);
+    } catch (oldErr) {
+      console.error("获取玛雅历史记录失败 (旧版API):", oldErr);
     }
-  }
-  
-  // 如果是生产环境，尝试使用相对路径
-  if (process.env.NODE_ENV === 'production') {
-    const relativePaths = ['/maya/history', '/api/maya/history'];
-    for (const path of relativePaths) {
+    
+    // 如果是生产环境，尝试使用相对路径
+    if (process.env.NODE_ENV === 'production') {
       try {
-        console.log("尝试使用相对路径获取玛雅历史记录:", path);
-        const relativeResponse = await axios.get(path, axiosConfig);
-        
+        const relativeResponse = await axios.get('/maya/history', axiosConfig);
         if (relativeResponse.data && relativeResponse.data.history) {
           return {
             success: true,
@@ -794,31 +760,15 @@ export const fetchMayaHistory = async (apiBaseUrl) => {
           };
         }
       } catch (relativeErr) {
-        console.error(`使用相对路径 ${path} 获取玛雅历史记录失败:`, relativeErr);
+        console.error("使用相对路径获取玛雅历史记录失败:", relativeErr);
       }
     }
+    
+    return {
+      success: false,
+      error: `获取玛雅历史记录失败：${err.message}`
+    };
   }
-  
-  // 尝试从本地存储获取历史记录
-  try {
-    const mayaHistoryStr = localStorage.getItem('mayaCalendarHistory');
-    if (mayaHistoryStr) {
-      const history = JSON.parse(mayaHistoryStr);
-      if (Array.isArray(history) && history.length > 0) {
-        return {
-          success: true,
-          history: history
-        };
-      }
-    }
-  } catch (localErr) {
-    console.error("从本地存储获取玛雅历史记录失败:", localErr);
-  }
-  
-  return {
-    success: false,
-    error: "获取玛雅历史记录失败，请稍后再试"
-  };
 };
 
 // 获取出生日期的玛雅日历信息
@@ -863,17 +813,12 @@ export const fetchMayaBirthInfo = async (apiBaseUrl, birthDateStr) => {
   
   // 如果是生产环境，尝试使用相对路径
   if (process.env.NODE_ENV === 'production') {
-    const relativePaths = ['/maya/birth', '/api/maya/birth', '/maya/date', '/api/maya/date'];
+    const relativePaths = ['/maya/birth', '/api/maya/birth'];
     for (const path of relativePaths) {
       try {
-        // 根据路径类型选择参数名
-        const params = path.includes('birth') 
-          ? { birth_date: birthDateStr }
-          : { date: birthDateStr };
-          
         console.log(`尝试使用相对路径获取出生日期${birthDateStr}的玛雅日历信息:`, path);
         const relativeResponse = await axios.get(path, {
-          params,
+          params: { birth_date: birthDateStr },
           ...axiosConfig
         });
         

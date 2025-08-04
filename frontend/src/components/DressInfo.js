@@ -210,9 +210,9 @@ const DressInfo = ({ apiBaseUrl }) => {
           </div>
         </div>
         
-        {/* 日期快速选择标签 */}
+        {/* 日期快速选择标签 - 默认显示8天 */}
         <div className="flex border rounded-lg overflow-hidden shadow-sm">
-          {dressInfoList.map((info, index) => (
+          {dressInfoList.slice(0, 8).map((info, index) => (
             <div
               key={index}
               className={getDateTabClass(info.date)}

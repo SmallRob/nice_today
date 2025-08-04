@@ -549,12 +549,17 @@ const MayaCalendar = ({ apiBaseUrl }) => {
     author: "古谚" 
   };
 
-return (
-    <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
+  return (
+    <div className="bg-white shadow rounded-lg p-6">
+      {/* <h2 className="text-xl font-semibold mb-4 flex items-center">
+        <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+        玛雅启示
+      </h2> */}
+      
       {/* 玛雅日历知识卡片 */}
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl shadow-lg p-6 mb-6 text-white border border-purple-500">
-        <div className="flex items-center mb-3">
-          <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3 border border-white border-opacity-30">
+      <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg shadow-lg p-4 mb-6 text-white">
+        <div className="flex items-center mb-2">
+          <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3">
             <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd"></path>
             </svg>
@@ -566,36 +571,35 @@ return (
           通过玛雅日历，我们可以理解每日的宇宙能量模式，获得生活指引，与宇宙节奏同步。
         </p>
       </div>
-      
-      {/* 玛雅日历基础知识卡片 */}
-      <div className="bg-white shadow-lg rounded-xl p-6 mb-6 border border-gray-200">
+       {/* 玛雅日历知识卡片 */}
+       <div className="bg-white shadow rounded-lg p-6 mb-6">
         <h3 className="text-lg font-semibold mb-4 flex items-center">
           <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
           玛雅日历基础知识
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <div className="text-center p-4 bg-red-50 rounded-xl border border-red-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="w-12 h-12 bg-red-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold shadow-sm">印</div>
+          <div className="text-center p-3 bg-red-50 rounded-lg">
+            <div className="w-12 h-12 bg-red-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold">印</div>
             <p className="text-sm font-medium">红色印记</p>
             <p className="text-xs text-gray-600">开始、启动</p>
           </div>
-          <div className="text-center p-4 bg-white rounded-xl border border-gray-300 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="w-12 h-12 bg-white border-2 border-gray-300 rounded-full mx-auto mb-2 flex items-center justify-center text-gray-700 font-bold shadow-sm">风</div>
+          <div className="text-center p-3 bg-white rounded-lg">
+            <div className="w-12 h-12 bg-white border-2 border-gray-300 rounded-full mx-auto mb-2 flex items-center justify-center text-gray-700 font-bold">风</div>
             <p className="text-sm font-medium">白色风</p>
             <p className="text-xs text-gray-600">沟通、灵感</p>
           </div>
-          <div className="text-center p-4 bg-blue-50 rounded-xl border border-blue-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="w-12 h-12 bg-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold shadow-sm">夜</div>
+          <div className="text-center p-3 bg-blue-50 rounded-lg">
+            <div className="w-12 h-12 bg-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold">夜</div>
             <p className="text-sm font-medium">蓝色夜</p>
             <p className="text-xs text-gray-600">梦想、直觉</p>
           </div>
-          <div className="text-center p-4 bg-yellow-50 rounded-xl border border-yellow-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="w-12 h-12 bg-yellow-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold shadow-sm">种</div>
+          <div className="text-center p-3 bg-yellow-50 rounded-lg">
+            <div className="w-12 h-12 bg-yellow-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold">种</div>
             <p className="text-sm font-medium">黄色种子</p>
             <p className="text-xs text-gray-600">觉醒、成长</p>
           </div>
-          <div className="text-center p-4 bg-green-50 rounded-xl border border-green-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="w-12 h-12 bg-green-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold shadow-sm">地</div>
+          <div className="text-center p-3 bg-green-50 rounded-lg">
+            <div className="w-12 h-12 bg-green-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold">地</div>
             <p className="text-sm font-medium">绿色地球</p>
             <p className="text-xs text-gray-600">同步、和谐</p>
           </div>
@@ -603,7 +607,7 @@ return (
       </div>
       
       {/* 日期选择区域 */}
-      <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+      <div className="bg-white shadow rounded-lg p-6">
         <div className="flex flex-col sm:flex-row items-center justify-between mb-4">
           <div className="mb-4 sm:mb-0">
             <h3 className="text-lg font-medium flex items-center">
@@ -620,11 +624,11 @@ return (
               selected={selectedDate}
               onChange={handleDateChange}
               dateFormat="yyyy-MM-dd"
-              className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center shadow-sm"
+              className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
             />
             <button
               onClick={() => handleDateChange(new Date())}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg transition-colors duration-200 text-sm shadow-sm hover:shadow-md"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md transition-colors duration-200 text-sm"
             >
               今日
             </button>
@@ -643,10 +647,10 @@ return (
                 <button
                   key={index}
                   onClick={() => handleHistoryClick(dateStr)}
-                  className={`px-3 py-1 text-sm rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md ${
+                  className={`px-3 py-1 text-sm rounded-full transition-colors ${
                     selectedMayaInfo && selectedMayaInfo.date === dateStr
-                      ? "bg-blue-500 text-white border border-blue-600"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   {dateStr}
@@ -657,7 +661,7 @@ return (
         )}
         
         {/* 日期快速选择标签 - 固定显示7天 */}
-        <div className="flex border border-gray-300 rounded-xl overflow-hidden shadow-sm">
+        <div className="flex border rounded-lg overflow-hidden shadow-sm">
           {mayaInfoList.slice(0, 7).map((info, index) => (
             <div
               key={index}
@@ -687,23 +691,23 @@ return (
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* 左侧：玛雅日历详细信息 */}
         <div>
           {/* 玛雅日历基本信息 - 增强视觉效果 */}
-          <div className="mb-6 bg-gradient-to-br from-blue-100 to-purple-100 p-6 rounded-xl shadow-lg border border-blue-200">
+          <div className="mb-6 bg-gradient-to-br from-blue-100 to-purple-100 p-6 rounded-lg shadow-md">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-medium flex items-center">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
                 {selectedMayaInfo.date} {selectedMayaInfo.weekday}
               </h3>
-              <span className="px-3 py-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full text-sm shadow-sm border border-purple-600">
+              <span className="px-3 py-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full text-sm shadow-sm">
                 {selectedMayaInfo.maya_tone}
               </span>
             </div>
             
             <div className="flex flex-col items-center justify-center mb-4">
-              <div className="w-24 h-24 bg-yellow-400 rounded-xl flex items-center justify-center mb-3 shadow-lg border border-yellow-500">
+              <div className="w-24 h-24 bg-yellow-400 rounded-lg flex items-center justify-center mb-3">
                 <div className="text-center">
                   <div className="text-3xl font-bold">{selectedMayaInfo.maya_kin}</div>
                 </div>
@@ -712,7 +716,7 @@ return (
             </div>
             
             {/* 每日启示语 */}
-            <div className="mt-4 p-4 bg-white bg-opacity-70 rounded-xl border border-white border-opacity-50 shadow-sm">
+            <div className="mt-4 p-4 bg-white bg-opacity-70 rounded-lg">
               <p className="text-gray-800 italic text-center">"{selectedMayaInfo.daily_message}"</p>
               <p className="text-right text-sm mt-2 text-gray-600">
                 —— {selectedMayaInfo.daily_quote.content} · {selectedMayaInfo.daily_quote.author}
@@ -722,9 +726,9 @@ return (
           
           {/* 建议与禁忌 - 增强视觉效果 */}
           <div className="grid grid-cols-1 gap-4 mb-6">
-            <div className="bg-green-50 p-4 rounded-xl shadow-lg border border-green-200 hover:shadow-xl transition-shadow duration-200">
+            <div className="bg-green-50 p-4 rounded-lg shadow-sm border border-green-100">
               <div className="flex items-center mb-2">
-                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white mr-2 shadow-sm">
+                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white mr-2">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
                   </svg>
@@ -740,9 +744,9 @@ return (
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 p-4 rounded-xl shadow-lg border border-red-200 hover:shadow-xl transition-shadow duration-200">
+            <div className="bg-red-50 p-4 rounded-lg shadow-sm border border-red-100">
               <div className="flex items-center mb-2">
-                <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white mr-2 shadow-sm">
+                <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white mr-2">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path>
                   </svg>
@@ -760,32 +764,32 @@ return (
             </div>
             
             {/* 每日指引卡片 - 移动到左侧每日禁忌下方 */}
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-l-4 border-purple-500 rounded-xl p-4 shadow-lg border border-purple-200">
+            <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-l-4 border-purple-500 rounded-lg p-4">
               <h3 className="text-lg font-medium mb-3 flex items-center">
                 <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
                 每日指引
               </h3>
               
               <div className="grid grid-cols-1 gap-3">
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-3 shadow-sm">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-3">
                   <div className="flex items-center mb-2">
-                    <span className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2 shadow-sm">晨</span>
+                    <span className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2">晨</span>
                     <span className="font-medium text-blue-800">早晨指引</span>
                   </div>
                   <p className="text-sm text-blue-700 leading-relaxed">{dailyGuidance.morning}</p>
                 </div>
                 
-                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 border border-orange-200 rounded-xl p-3 shadow-sm">
+                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 border border-orange-200 rounded-lg p-3">
                   <div className="flex items-center mb-2">
-                    <span className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2 shadow-sm">午</span>
+                    <span className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2">午</span>
                     <span className="font-medium text-orange-800">下午指引</span>
                   </div>
                   <p className="text-sm text-orange-700 leading-relaxed">{dailyGuidance.afternoon}</p>
                 </div>
                 
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-3 shadow-sm">
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-3">
                   <div className="flex items-center mb-2">
-                    <span className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2 shadow-sm">晚</span>
+                    <span className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2">晚</span>
                     <span className="font-medium text-purple-800">夜晚指引</span>
                   </div>
                   <p className="text-sm text-purple-700 leading-relaxed">{dailyGuidance.evening}</p>
@@ -810,10 +814,10 @@ return (
             return (
               <div className="mb-6">
                 <h3 className="text-lg font-medium mb-3">今日能量分数</h3>
-                <div className={`${energyInfo.bgColor} p-4 rounded-xl border ${energyInfo.borderColor} shadow-lg hover:shadow-xl transition-shadow duration-200`}>
+                <div className={`${energyInfo.bgColor} p-4 rounded-lg border ${energyInfo.borderColor} shadow-sm hover:shadow-md transition-shadow duration-200`}>
                   <div className="flex items-center justify-between mb-4">
                     <h4 className={`font-bold ${energyInfo.textColor}`}>能量等级: <span className="text-lg">{energyInfo.level}</span></h4>
-                    <div className={`px-3 py-1 bg-white rounded-full ${energyInfo.textColor} text-sm border ${energyInfo.borderColor} shadow-sm`}>
+                    <div className={`px-3 py-1 bg-white rounded-full ${energyInfo.textColor} text-sm border ${energyInfo.borderColor}`}>
                       {energyScore}/100
                     </div>
                   </div>
@@ -842,7 +846,7 @@ return (
                   </div>
                   
                   {/* 能量分数总结提示 */}
-                  <div className="mb-4 p-3 bg-white rounded-xl shadow-inner border border-gray-200">
+                  <div className="mb-4 p-3 bg-white rounded-lg shadow-inner">
                     <p className={`text-sm ${energyInfo.textColor}`}>
                       {energyInfo.tip}
                     </p>
@@ -895,10 +899,10 @@ return (
                   [colorName + '色', colorName + '调', colorName + '韵'];
                 
                 return (
-                  <div className={`mb-4 ${colorInfo.bgColor} p-4 rounded-xl border ${colorInfo.borderColor} shadow-lg hover:shadow-xl transition-shadow duration-200`}>
+                  <div className={`mb-4 ${colorInfo.bgColor} p-4 rounded-lg border ${colorInfo.borderColor} shadow-sm hover:shadow-md transition-shadow duration-200`}>
                     <div className="flex items-center mb-3">
                       <div 
-                        className="w-10 h-10 rounded-full mr-3 flex-shrink-0 shadow-inner border border-white" 
+                        className="w-10 h-10 rounded-full mr-3 flex-shrink-0 shadow-inner" 
                         style={{ background: `linear-gradient(135deg, ${colorInfo.colorHex}, ${colorInfo.colorHex})` }}
                       ></div>
                       <h4 className={`text-lg font-bold ${colorInfo.textColor}`}>{colorName}</h4>
@@ -906,7 +910,7 @@ return (
                     <div className="ml-2">
                       <div className="flex flex-wrap mb-2">
                         {colorVariants.map((variant, idx) => (
-                          <span key={idx} className={`mr-2 mb-2 px-3 py-1 bg-white ${colorInfo.textColor} rounded-lg text-sm border ${colorInfo.borderColor} shadow-sm`}>
+                          <span key={idx} className={`mr-2 mb-2 px-3 py-1 bg-white ${colorInfo.textColor} rounded-full text-sm border ${colorInfo.borderColor} shadow-sm`}>
                             {variant}
                           </span>
                         ))}
@@ -935,9 +939,9 @@ return (
                 ];
                 
                 return (
-                  <div className={`mb-4 ${numberInfo.bgColor} p-4 rounded-xl border ${numberInfo.borderColor} shadow-lg hover:shadow-xl transition-shadow duration-200`}>
+                  <div className={`mb-4 ${numberInfo.bgColor} p-4 rounded-lg border ${numberInfo.borderColor} shadow-sm hover:shadow-md transition-shadow duration-200`}>
                     <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-3 flex-shrink-0 shadow-sm border border-gray-200">
+                      <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
                         <span className="text-2xl">{numberInfo.emoji}</span>
                       </div>
                       <h4 className={`text-lg font-bold ${numberInfo.textColor}`}>数字 {luckyNumber}</h4>
@@ -945,7 +949,7 @@ return (
                     <div className="ml-2">
                       <div className="flex flex-wrap mb-2">
                         {numberCombinations.map((combo, idx) => (
-                          <span key={idx} className={`mr-2 mb-2 px-3 py-1 bg-white ${numberInfo.textColor} rounded-lg text-sm border ${numberInfo.borderColor} shadow-sm`}>
+                          <span key={idx} className={`mr-2 mb-2 px-3 py-1 bg-white ${numberInfo.textColor} rounded-full text-sm border ${numberInfo.borderColor} shadow-sm`}>
                             {combo}
                           </span>
                         ))}
@@ -967,15 +971,15 @@ return (
                 const luckyFood = luckyItems.幸运食物;
                 
                 return (
-                  <div className={`mb-4 ${foodInfo.bgColor} p-4 rounded-xl border ${foodInfo.borderColor} shadow-lg hover:shadow-xl transition-shadow duration-200`}>
+                  <div className={`mb-4 ${foodInfo.bgColor} p-4 rounded-lg border ${foodInfo.borderColor} shadow-sm hover:shadow-md transition-shadow duration-200`}>
                     <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-3 flex-shrink-0 shadow-sm border border-gray-200">
+                      <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
                         <span className="text-2xl">{foodInfo.emoji}</span>
                       </div>
                       <h4 className={`text-lg font-bold ${foodInfo.textColor}`}>{luckyFood}</h4>
                     </div>
                     <div className="ml-2">
-                      <div className={`inline-block mb-2 px-3 py-1 bg-white ${foodInfo.textColor} rounded-lg text-sm border ${foodInfo.borderColor} shadow-sm`}>
+                      <div className={`inline-block mb-2 px-3 py-1 bg-white ${foodInfo.textColor} rounded-full text-sm border ${foodInfo.borderColor} shadow-sm`}>
                         {foodInfo.nutrition}
                       </div>
                       <p className="text-sm text-gray-700 mt-2">

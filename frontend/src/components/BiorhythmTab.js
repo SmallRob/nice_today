@@ -68,7 +68,7 @@ const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
     
     setLoading(false);
     setShowHistory(false); // 隐藏历史记录下拉菜单
-  }, [apiBaseUrl, apiConnected, birthDate, isDefaultDate]);
+  }, [apiBaseUrl, apiConnected, birthDate, isDefaultDate, DEFAULT_BIRTH_DATE]);
 
   // 更新 ref 以保存最新的 loadBiorhythmData 函数
   useEffect(() => {
@@ -107,7 +107,7 @@ const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
         loadBiorhythmDataRef.current(DEFAULT_BIRTH_DATE);
       }
     }
-  }, [apiBaseUrl, setIsDefaultDate]);
+  }, [apiBaseUrl, setIsDefaultDate, DEFAULT_BIRTH_DATE]);
 
   // 组件挂载时加载历史记录和数据
   useEffect(() => {
@@ -123,7 +123,7 @@ const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
       setIsDefaultDate(true);
       setBirthDate(new Date(DEFAULT_BIRTH_DATE));
     }
-  }, [apiBaseUrl, apiConnected, loadHistoryAndData]);
+  }, [apiBaseUrl, apiConnected, loadHistoryAndData, DEFAULT_BIRTH_DATE]);
 
   // 处理日期选择变化
   const handleDateChange = (date) => {
