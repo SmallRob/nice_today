@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, date
 import random
 import math
 from typing import List, Dict, Any, Tuple, Optional
-from utils.date_utils import get_date_str, get_weekday
+from utils.date_utils import normalize_date_string, parse_date
 from config.maya_config import (
     MAYA_SEAL_LIST, MAYA_SEALS, MAYA_TONE_LIST, MAYA_TONES, 
     MAYA_MONTHS, SUGGESTIONS, LUCKY_ITEMS, DAILY_QUOTES, 
@@ -21,6 +21,15 @@ MAYA_CALENDAR_ROUND = 18980  # 玛雅历轮回（52年）
 
 # 玛雅长历起始日期（格里高利历）- 更精确的日期
 MAYA_EPOCH = datetime(2012, 12, 21)  # 第13个巴克顿周期结束日期
+
+def get_date_str(date_obj: datetime) -> str:
+    """获取日期字符串"""
+    return date_obj.strftime("%Y-%m-%d")
+
+def get_weekday(date_obj: datetime) -> str:
+    """获取星期几"""
+    weekdays = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
+    return weekdays[date_obj.weekday()]
 
 def calculate_kin_number(date_obj: datetime) -> int:
     """
@@ -109,11 +118,10 @@ def calculate_maya_month(date_obj: datetime) -> Dict[str, Any]:
 def get_personalized_suggestions(date_obj: datetime, kin: int) -> Dict[str, List[str]]:
     """
     获取个性化建议和禁忌
-    基于日期和KIN码生成更有针对性的建议
+    基于日期和KIN码生成确定性的建议
     """
-    # 使用日期和KIN码作为随机种子，确保同一天得到相同结果
-    seed = date_obj.toordinal() + kin
-    random.seed(seed)
+    # 使用确定性算法替代随机选择
+    seed_value = date_obj.year * 10000 + date_obj.month * 100 + date_obj.day + kin
     
     # 获取印记和音调
     seal = get_maya_seal(kin)
@@ -123,12 +131,26 @@ def get_personalized_suggestions(date_obj: datetime, kin: int) -> Dict[str, List
     all_suggestions = SUGGESTIONS["建议"]
     all_avoidances = SUGGESTIONS["避免"]
     
-    # 使用加权随机选择，让更相关的建议有更高概率被选中
-    suggestions = random.sample(all_suggestions, 4)
-    avoidances = random.sample(all_avoidances, 3)
+    # 使用确定性选择替代随机选择
+    suggestions = []
+    for i in range(4):
+        index = (seed_value + i * 17) % len(all_suggestions)
+        if all_suggestions[index] not in suggestions:
+            suggestions.append(all_suggestions[index])
     
-    # 重置随机种子
-    random.seed()
+    # 如果没有足够的建议，补充默认建议
+    while len(suggestions) < 4:
+        suggestions.append("保持积极的心态，相信自己的能力")
+    
+    avoidances = []
+    for i in range(3):
+        index = (seed_value + i * 23 + 100) % len(all_avoidances)
+        if all_avoidances[index] not in avoidances:
+            avoidances.append(all_avoidances[index])
+    
+    # 如果没有足够的避免项，补充默认避免项
+    while len(avoidances) < 3:
+        avoidances.append("避免过度焦虑和负面思考")
     
     return {
         "建议": suggestions,
@@ -138,27 +160,31 @@ def get_personalized_suggestions(date_obj: datetime, kin: int) -> Dict[str, List
 def get_personalized_lucky_items(date_obj: datetime, kin: int) -> Dict[str, Dict[str, str]]:
     """
     获取个性化幸运物品
-    基于日期和KIN码生成更有针对性的幸运物品
+    基于日期和KIN码生成确定性的幸运物品
     """
-    # 使用日期和KIN码作为随机种子，确保同一天得到相同结果
-    seed = date_obj.toordinal() + kin
-    random.seed(seed)
+    # 使用确定性算法替代随机选择
+    seed_value = date_obj.year * 10000 + date_obj.month * 100 + date_obj.day + kin
     
     # 获取印记和音调
     seal_info = get_maya_seal(kin)
     tone_info = get_maya_tone(kin)
     
+    # 使用确定性选择替代随机选择
+    lucky_colors = LUCKY_ITEMS["幸运色"]
+    lucky_numbers = LUCKY_ITEMS["幸运数字"]
+    lucky_foods = LUCKY_ITEMS["幸运食物"]
+    
     # 选择幸运色
-    lucky_color = random.choice(LUCKY_ITEMS["幸运色"])
+    color_index = seed_value % len(lucky_colors)
+    lucky_color = lucky_colors[color_index]
     
     # 选择幸运数字
-    lucky_number = random.choice(LUCKY_ITEMS["幸运数字"])
+    number_index = (seed_value + 37) % len(lucky_numbers)
+    lucky_number = lucky_numbers[number_index]
     
     # 选择幸运食物
-    lucky_food = random.choice(LUCKY_ITEMS["幸运食物"])
-    
-    # 重置随机种子
-    random.seed()
+    food_index = (seed_value + 73) % len(lucky_foods)
+    lucky_food = lucky_foods[food_index]
     
     return {
         "幸运色": lucky_color["颜色"],
@@ -205,9 +231,11 @@ def calculate_energy_scores(date_obj: datetime, kin: int) -> Dict[str, Dict[str,
         # 计算基础分数
         score = base_energy + adjustment
         
-        # 添加一些随机变化（但保持一致性）
-        random.seed(date_obj.toordinal() + hash(key) + kin)
-        variation = random.uniform(-8, 8)
+        # 添加确定性变化（保持一致性）
+        # 使用确定性算法替代随机变化
+        variation_seed = date_obj.year * 10000 + date_obj.month * 100 + date_obj.day + hash(key) % 1000 + kin
+        # 使用简单的线性同余生成器生成确定性变化
+        variation = ((variation_seed * 1664525 + 1013904223) % (2**32)) / (2**32) * 16 - 8
         score += variation
         
         # 确保分数在合理范围内
@@ -224,9 +252,6 @@ def calculate_energy_scores(date_obj: datetime, kin: int) -> Dict[str, Dict[str,
             "intensity": abs(round(variation)),
             "suggestion": get_energy_suggestion(key, score)
         }
-    
-    # 重置随机种子
-    random.seed()
     
     return {
         "scores": scores,
@@ -280,20 +305,17 @@ def get_energy_suggestion(category: str, score: int) -> str:
 def get_daily_inspiration(date_obj: datetime, kin: int) -> Dict[str, Any]:
     """
     获取每日灵感信息
-    基于日期和KIN码选择更有针对性的信息
+    基于日期和KIN码选择确定性的信息
     """
-    # 使用日期和KIN码作为随机种子，确保同一天得到相同结果
-    seed = date_obj.toordinal() + kin
-    random.seed(seed)
+    # 使用确定性算法替代随机选择
+    seed_value = date_obj.year * 10000 + date_obj.month * 100 + date_obj.day + kin
     
-    # 选择每日信息
-    daily_message = random.choice(DAILY_MESSAGES)
+    # 使用确定性选择替代随机选择
+    message_index = seed_value % len(DAILY_MESSAGES)
+    daily_message = DAILY_MESSAGES[message_index]
     
-    # 选择每日格言
-    daily_quote = random.choice(DAILY_QUOTES)
-    
-    # 重置随机种子
-    random.seed()
+    quote_index = (seed_value + 41) % len(DAILY_QUOTES)
+    daily_quote = DAILY_QUOTES[quote_index]
     
     return {
         "message": daily_message,
@@ -494,12 +516,12 @@ def get_maya_birth_info(birth_date_str: str) -> Dict[str, Any]:
     # 基于印记和音调选择主要和次要能量场
     energy_fields = list(ENERGY_FIELDS.keys())
     
-    # 使用出生日期作为随机种子，确保结果一致
-    random.seed(birth_date.toordinal() + kin)
+    # 使用确定性算法选择能量场
+    seed_value = birth_date.toordinal() + kin
     
     primary_field = energy_fields[kin % len(energy_fields)]
     remaining_fields = [f for f in energy_fields if f != primary_field]
-    secondary_field = remaining_fields[kin % len(remaining_fields)]
+    secondary_field = remaining_fields[(seed_value + 13) % len(remaining_fields)]
     
     birth_energy_field = {
         "primary": {
@@ -512,9 +534,6 @@ def get_maya_birth_info(birth_date_str: str) -> Dict[str, Any]:
         },
         "balance_suggestion": f"平衡{primary_field}和{secondary_field}的能量，发挥你的最大潜能"
     }
-    
-    # 重置随机种子
-    random.seed()
     
     # 构建出生日历信息
     birth_info = {

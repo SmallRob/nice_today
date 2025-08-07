@@ -6,6 +6,9 @@ import BiorhythmInfo from './BiorhythmInfo';
 import { fetchHistoryDates, fetchBiorhythmData } from '../services/apiService';
 import elementConfig from '../config/elementConfig.json';
 
+// 自定义日期选择器样式
+import "./DatePickerStyles.css";
+
 const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
   const [birthDate, setBirthDate] = useState(null);
   const [rhythmData, setRhythmData] = useState(null);
@@ -152,16 +155,36 @@ const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
           </div>
         )}
         <div className="flex flex-col sm:flex-row items-center gap-4">
-          <DatePicker
-            selected={birthDate}
-            onChange={handleDateChange}
-            dateFormat="yyyy-MM-dd"
-            placeholderText="选择出生日期"
-            className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            showYearDropdown
-            scrollableYearDropdown
-            yearDropdownItemNumber={100}
-          />
+          <div className="datepicker-container relative">
+            <DatePicker
+              selected={birthDate}
+              onChange={handleDateChange}
+              dateFormat="yyyy-MM-dd"
+              placeholderText="选择出生日期"
+              className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              showYearDropdown
+              scrollableYearDropdown
+              yearDropdownItemNumber={100}
+              popperClassName="datepicker-popper"
+              popperPlacement="bottom-start"
+              popperModifiers={[
+                {
+                  name: "offset",
+                  options: {
+                    offset: [0, 8],
+                  },
+                },
+                {
+                  name: "preventOverflow",
+                  options: {
+                    rootBoundary: "viewport",
+                    tether: false,
+                    altAxis: true,
+                  },
+                },
+              ]}
+            />
+          </div>
           <div className="flex gap-2">
             <button
               onClick={() => loadBiorhythmData()}
@@ -181,7 +204,7 @@ const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
               </button>
               
               {showHistory && historyDates.length > 0 && (
-                <div className="absolute z-10 mt-2 w-48 bg-white rounded-md shadow-lg">
+                <div className="absolute z-50 mt-2 w-48 bg-white rounded-md shadow-lg">
                   <div className="py-1">
                     {historyDates.map((date, index) => (
                       <button
@@ -210,13 +233,13 @@ const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
           
           <div className="space-y-6">
             <div className="bg-white shadow rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">今日节律</h2>
+              <h2 className="text-xl font-semibold mb-4">生物节律科学依据</h2>
               <BiorhythmInfo data={todayData} title="今日" />
             </div>
             
             <div className="bg-white shadow rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">10天后节律</h2>
-              <BiorhythmInfo data={futureData} title="10天后" />
+              <h2 className="text-xl font-semibold mb-4">7天后节律</h2>
+              <BiorhythmInfo data={futureData} title="7天后" />
             </div>
           </div>
         </>

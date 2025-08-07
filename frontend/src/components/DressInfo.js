@@ -156,31 +156,31 @@ const DressInfo = ({ apiBaseUrl }) => {
           <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
           五行基础知识
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <div className="text-center p-3 bg-green-50 rounded-lg">
+        <div className="flex w-full">
+          <div className="flex-1 text-center p-3 bg-green-50 rounded-lg mx-1">
             <div className="w-12 h-12 bg-green-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold">木</div>
-            <p className="text-sm font-medium">木行</p>
-            <p className="text-xs text-gray-600">生长、向上</p>
+            <p className="text-sm font-medium whitespace-nowrap">木行</p>
+            <p className="text-xs text-gray-600 whitespace-nowrap">生长、向上</p>
           </div>
-          <div className="text-center p-3 bg-red-50 rounded-lg">
+          <div className="flex-1 text-center p-3 bg-red-50 rounded-lg mx-1">
             <div className="w-12 h-12 bg-red-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold">火</div>
-            <p className="text-sm font-medium">火行</p>
-            <p className="text-xs text-gray-600">温热、向上</p>
+            <p className="text-sm font-medium whitespace-nowrap">火行</p>
+            <p className="text-xs text-gray-600 whitespace-nowrap">温热、向上</p>
           </div>
-          <div className="text-center p-3 bg-yellow-50 rounded-lg">
+          <div className="flex-1 text-center p-3 bg-yellow-50 rounded-lg mx-1">
             <div className="w-12 h-12 bg-yellow-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold">土</div>
-            <p className="text-sm font-medium">土行</p>
-            <p className="text-xs text-gray-600">承载、中和</p>
+            <p className="text-sm font-medium whitespace-nowrap">土行</p>
+            <p className="text-xs text-gray-600 whitespace-nowrap">承载、中和</p>
           </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
+          <div className="flex-1 text-center p-3 bg-gray-50 rounded-lg mx-1">
             <div className="w-12 h-12 bg-gray-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold">金</div>
-            <p className="text-sm font-medium">金行</p>
-            <p className="text-xs text-gray-600">收敛、肃杀</p>
+            <p className="text-sm font-medium whitespace-nowrap">金行</p>
+            <p className="text-xs text-gray-600 whitespace-nowrap">收敛、肃杀</p>
           </div>
-          <div className="text-center p-3 bg-blue-50 rounded-lg">
+          <div className="flex-1 text-center p-3 bg-blue-50 rounded-lg mx-1">
             <div className="w-12 h-12 bg-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold">水</div>
-            <p className="text-sm font-medium">水行</p>
-            <p className="text-xs text-gray-600">滋润、向下</p>
+            <p className="text-sm font-medium whitespace-nowrap">水行</p>
+            <p className="text-xs text-gray-600 whitespace-nowrap">滋润、向下</p>
           </div>
         </div>
       </div>
@@ -194,16 +194,15 @@ const DressInfo = ({ apiBaseUrl }) => {
               选择查询日期
             </h3>
             <p className="text-sm text-gray-500 mt-1">
-              点击日期标签快速切换，或使用日期选择器查看特定日期的建议
+              点击下方日期快速切换或使用日期选择器
             </p>
           </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-500">选择日期:</span>
+          <div className="flex items-center">
             <DatePicker
               selected={selectedDate}
               onChange={handleDateChange}
               dateFormat="yyyy-MM-dd"
-              className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
+              className="border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center text-sm"
               minDate={dateRange.start}
               maxDate={dateRange.end}
             />

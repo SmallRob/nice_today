@@ -4,6 +4,10 @@
 BACKEND_PORT=5020
 FRONTEND_PORT=3000
 
+# 定义后端API地址
+DEFAULT_BACKEND_API="http://localhost:$BACKEND_PORT"
+REMOTE_BACKEND_API="https://nice-mcp.leansoftx.com/api"
+
 # 定义虚拟环境名称和路径
 VENV_NAME="biorhythm_env"
 VENV_PATH="./$VENV_NAME"
@@ -190,10 +194,9 @@ else
   pip install --user -r requirements.txt || { echo "安装后端依赖失败"; exit 1; }
 fi
 
-echo "启动 Flask 服务器..."
+echo "启动 FastAPI 服务器..."
 # 使用动态端口启动后端
-export FLASK_RUN_PORT=$BACKEND_PORT  # 保留这个变量名以保持兼容性
-python app.py > backend.log 2>&1 &  # FastAPI应用会读取这个环境变量
+python app.py --port $BACKEND_PORT > backend.log 2>&1 &  # 直接传递端口参数
 BACKEND_PID=$!
 cd ..
 
@@ -218,14 +221,29 @@ else
   echo "无法测试后端服务可访问性，缺少 curl 或 wget 命令"
 fi
 
+# 询问用户是否使用远程后端API
+echo "请选择后端API连接方式:"
+echo "1) 使用本地后端 (默认)"
+echo "2) 使用远程后端 (https://nice-mcp.leansoftx.com/api)"
+read -p "请输入选项 [1/2]: " api_choice
+
+# 设置API地址
+if [ "$api_choice" = "2" ]; then
+  BACKEND_API=$REMOTE_BACKEND_API
+  echo "已选择使用远程后端API: $BACKEND_API"
+else
+  BACKEND_API=$DEFAULT_BACKEND_API
+  echo "已选择使用本地后端API: $BACKEND_API"
+fi
+
 # 安装前端依赖并启动前端服务
 echo "安装前端依赖并启动前端服务..."
 cd frontend
 echo "安装 npm 依赖..."
 npm install || { echo "安装前端依赖失败"; kill $BACKEND_PID; exit 1; }
 echo "启动 React 开发服务器..."
-# 使用动态端口启动前端，并传递后端端口给前端应用
-REACT_APP_BACKEND_PORT=$BACKEND_PORT PORT=$FRONTEND_PORT npm start > frontend.log 2>&1 &
+# 使用动态端口启动前端，并传递后端API地址给前端应用
+REACT_APP_BACKEND_API=$BACKEND_API REACT_APP_BACKEND_PORT=$BACKEND_PORT PORT=$FRONTEND_PORT npm start > frontend.log 2>&1 &
 FRONTEND_PID=$!
 cd ..
 

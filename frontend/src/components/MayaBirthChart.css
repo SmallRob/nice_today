@@ -1,0 +1,467 @@
+/* 玛雅出生图样式 - 现代化设计 */
+.maya-birth-chart {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  background-image: linear-gradient(to bottom, #f9f9ff, #ffffff);
+}
+
+.maya-birth-chart h2 {
+  text-align: center;
+  color: #4a5568;
+  margin-bottom: 24px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, #4a5568, #805ad5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f0f0ff;
+}
+
+.date-picker-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+  background-color: #f8fafc;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  border: 1px solid #edf2f7;
+  flex-wrap: nowrap;
+  gap: 16px;
+}
+
+.date-picker {
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 16px;
+  min-width: 140px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  background-color: white;
+}
+
+.date-picker:focus {
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+  outline: none;
+}
+
+.submit-button {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #4299e1, #667eea);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(66, 153, 225, 0.2);
+  white-space: nowrap;
+  min-width: 120px;
+  text-align: center;
+}
+
+.submit-button:hover {
+  background: linear-gradient(135deg, #3182ce, #5a67d8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(66, 153, 225, 0.25);
+}
+
+.submit-button:disabled {
+  background: linear-gradient(135deg, #cbd5e0, #a0aec0);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  opacity: 0.7;
+}
+
+.history-container {
+  margin-bottom: 24px;
+  background-color: #f7fafc;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.history-container h3 {
+  font-size: 1.1rem;
+  color: #4a5568;
+  margin-bottom: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.history-container h3::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #667eea;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.history-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.history-date-button {
+  padding: 8px 14px;
+  background-color: #edf2f7;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  color: #4a5568;
+}
+
+.history-date-button:hover {
+  background-color: #e2e8f0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.error-message {
+  color: #e53e3e;
+  text-align: center;
+  margin: 20px 0;
+  padding: 12px;
+  background-color: #fed7d7;
+  border-radius: 8px;
+  border-left: 4px solid #e53e3e;
+  font-weight: 500;
+}
+
+.birth-chart-results {
+  margin-top: 30px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 增强卡片样式 */
+.birth-info > div {
+  transition: all 0.3s ease;
+}
+
+.birth-info > div:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .date-picker-container {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+  
+  .date-picker {
+    flex: 1 1 auto;
+    min-width: 120px;
+    margin-right: 12px;
+    margin-bottom: 0;
+  }
+  
+  .submit-button {
+    flex: 0 0 auto;
+    min-width: 120px;
+    white-space: nowrap;
+  }
+  
+  .birth-info .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .date-picker-container {
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+  
+  .date-picker {
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    padding: 10px;
+  }
+  
+  .submit-button {
+    flex: 0 0 auto;
+    min-width: 100px;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+}
+
+/* 增强色块显示样式 */
+.maya-info-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 20px;
+  color: white;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.maya-info-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: rotate(45deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.maya-kin-display {
+  background: linear-gradient(135deg, #ff6b6b, #feca57);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+  margin: 8px 0;
+}
+
+.maya-tone-display {
+  background: linear-gradient(135deg, #48cae4, #023e8a);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 15px rgba(72, 202, 228, 0.3);
+  margin: 8px 0;
+}
+
+.maya-seal-display {
+  background: linear-gradient(135deg, #a8e6cf, #3d5a80);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 15px rgba(168, 230, 207, 0.3);
+  margin: 8px 0;
+}
+
+.maya-seal-desc-display {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
+  margin: 8px 0;
+}
+
+/* 印记和音调信息增强样式 */
+.seal-info-enhanced {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border: 2px solid #2196f3;
+  border-radius: 16px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.seal-info-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #2196f3, #21cbf3, #2196f3);
+  animation: wave 2s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+.tone-info-enhanced {
+  background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+  border: 2px solid #9c27b0;
+  border-radius: 16px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.tone-info-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #9c27b0, #e91e63, #9c27b0);
+  animation: wave 2s ease-in-out infinite;
+}
+
+/* 能量场增强样式 */
+.energy-field-primary {
+  background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+  border: 2px solid #4caf50;
+  border-radius: 16px;
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.2);
+}
+
+.energy-field-secondary {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border: 2px solid #2196f3;
+  border-radius: 16px;
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(33, 150, 243, 0.2);
+}
+
+.energy-field-balance {
+  background: linear-gradient(135deg, #fff3e0, #ffcc02);
+  border: 2px solid #ff9800;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  color: #e65100;
+  box-shadow: 0 4px 20px rgba(255, 152, 0, 0.3);
+}
+
+/* 个人特质增强样式 */
+.strengths-container {
+  background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+  border: 3px solid #4caf50;
+  border-radius: 20px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.strengths-container::before {
+  content: '✓';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 40px;
+  height: 40px;
+  background: #4caf50;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.challenges-container {
+  background: linear-gradient(135deg, #ffebee, #ffcdd2);
+  border: 3px solid #f44336;
+  border-radius: 20px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.challenges-container::before {
+  content: '⚠';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 40px;
+  height: 40px;
+  background: #f44336;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+/* 色彩指示器 */
+.color-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.color-blue { background: linear-gradient(135deg, #2196f3, #21cbf3); }
+.color-purple { background: linear-gradient(135deg, #9c27b0, #e91e63); }
+.color-green { background: linear-gradient(135deg, #4caf50, #8bc34a); }
+.color-orange { background: linear-gradient(135deg, #ff9800, #ffc107); }
+.color-red { background: linear-gradient(135deg, #f44336, #e91e63); }
+.color-teal { background: linear-gradient(135deg, #009688, #4db6ac); }
+.color-indigo { background: linear-gradient(135deg, #3f51b5, #5c6bc0); }
+
+/* 响应式增强 */
+@media (max-width: 768px) {
+  .maya-info-card {
+    padding: 16px;
+  }
+  
+  .strengths-container,
+  .challenges-container {
+    padding: 20px;
+  }
+  
+  .energy-field-primary,
+  .energy-field-secondary,
+  .energy-field-balance {
+    padding: 16px;
+  }
+}

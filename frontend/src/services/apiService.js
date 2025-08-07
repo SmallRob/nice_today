@@ -83,8 +83,10 @@ export const testApiConnection = async (baseUrl) => {
     
     // 在开发环境中尝试其他常用端口
     if (process.env.NODE_ENV !== 'production') {
-      // 使用环境变量配置的端口，默认为5001
+      // 使用环境变量配置的端口，优先使用REACT_APP_BACKEND_PORT，默认为5001
       const defaultPort = process.env.REACT_APP_BACKEND_PORT || 5001;
+      console.log("使用环境变量配置的后端端口:", defaultPort);
+      // 添加更多可能的端口，确保defaultPort是第一个尝试的
       const alternativePorts = [defaultPort, 5000, 5020, 8000, 8080];
       
       // 尝试不同的API路径组合
@@ -117,7 +119,15 @@ export const testApiConnection = async (baseUrl) => {
     
     return {
       success: false,
-      error: `无法连接到后端服务 (${baseUrl})。请确保后端服务已启动，并检查网络连接。错误详情: ${err.message}`
+      error: `无法连接到后端服务 (${baseUrl})。请确保后端服务已启动，并检查网络连接。错误详情: ${err.message}`,
+      // 添加更多错误信息以便调试
+      errorDetails: {
+        message: err.message,
+        code: err.code,
+        baseUrl: baseUrl,
+        env: process.env.NODE_ENV,
+        backendPort: process.env.REACT_APP_BACKEND_PORT || '未设置'
+      }
     };
   }
 };
@@ -835,11 +845,33 @@ export const fetchMayaBirthInfo = async (apiBaseUrl, birthDateStr) => {
     timeout: 8000,
     headers: {
       'Cache-Control': 'no-cache',
-      'Pragma': 'no-cache'
+      'Pragma': 'no-cache',
+      'Content-Type': 'application/json'
     }
   };
   
-  // 定义可能的API路径前缀
+  // 首先尝试新的玛雅出生图API (POST请求)
+  try {
+    // 使用传入的apiBaseUrl而不是硬编码的地址
+    const mayaApiUrl = `${apiBaseUrl}/api/maya/birth-info`;
+    console.log(`正在请求玛雅出生图API: ${mayaApiUrl}, 日期: ${birthDateStr}`);
+    
+    const response = await axios.post(mayaApiUrl, {
+      birth_date: birthDateStr
+    }, axiosConfig);
+    
+    if (response.data && response.data.success && response.data.birthInfo) {
+      console.log('玛雅出生图API返回成功:', response.data.birthInfo);
+      return {
+        success: true,
+        birthInfo: response.data.birthInfo
+      };
+    }
+  } catch (mayaApiErr) {
+    console.error('玛雅出生图API请求失败:', mayaApiErr);
+  }
+  
+  // 如果新API失败，尝试原有的API路径前缀
   const possiblePrefixes = ['', '/api', '/maya'];
   
   // 依次尝试不同的API路径前缀
@@ -887,65 +919,10 @@ export const fetchMayaBirthInfo = async (apiBaseUrl, birthDateStr) => {
     }
   }
   
-  // 所有尝试都失败，返回模拟数据
+  // 所有API尝试都失败，返回错误信息让前端使用本地计算
+  console.log('所有API尝试都失败，前端将使用本地计算方法');
   return {
-    success: true,
-    birthInfo: {
-      date: birthDateStr,
-      weekday: "星期" + "日一二三四五六".charAt(new Date(birthDateStr).getDay()),
-      maya_kin: "KIN" + (Math.floor(Math.random() * 260) + 1),
-      maya_seal: ["红龙", "白风", "蓝夜", "黄种子", "红蛇", "白世界连接者", "蓝手", "黄星星", "红月亮", "白狗", "蓝猴", "黄人", "红天空行者", "白巫师", "蓝鹰", "黄战士", "红地球", "白镜子", "蓝风暴", "黄太阳"][Math.floor(Math.random() * 20)],
-      maya_seal_desc: ["光谱的", "磁性的", "月亮的", "电子的", "自我存在的", "倍音的", "韵律的", "共振的", "银河的", "太阳的", "行星的", "光谱的", "水晶的", "宇宙的"][Math.floor(Math.random() * 13)] + ["红龙", "白风", "蓝夜", "黄种子", "红蛇", "白世界连接者", "蓝手", "黄星星", "红月亮", "白狗", "蓝猴", "黄人", "红天空行者", "白巫师", "蓝鹰", "黄战士", "红地球", "白镜子", "蓝风暴", "黄太阳"][Math.floor(Math.random() * 20)],
-      maya_seal_info: {
-        "特质": "生命力、滋养、起源",
-        "能量": "创造、孕育、信任",
-        "启示": "信任生命的过程，接受自己的本源力量",
-        "象征": "母亲、起源、生命力"
-      },
-      maya_tone_info: {
-        "数字": 1,
-        "行动": "吸引",
-        "本质": "统一的目标",
-        "启示": "找到你的目标和方向"
-      },
-      life_purpose: {
-        "summary": "磁性的红龙代表了一种独特的生命能量",
-        "details": "你的生命使命与生命力、滋养、起源有关",
-        "action_guide": "通过吸引的方式来实现你的潜能"
-      },
-      personal_traits: {
-        "strengths": [
-          "与生命力相关的天赋",
-          "在创造方面的能力",
-          "体现统一的目标的能力",
-          "发现和培养自己独特的才能",
-          "与滋养相关的天赋"
-        ],
-        "challenges": [
-          "平衡内在需求和外在期望",
-          "克服内向和保守",
-          "避免过度自我保护"
-        ]
-      },
-      birth_energy_field: {
-        "primary": {
-          "type": "个人能量场",
-          "info": {
-            "描述": "围绕个体的能量场，反映个人状态",
-            "影响范围": "个人情绪、健康、思维模式",
-            "增强方法": "冥想、运动、健康饮食、充足睡眠"
-          }
-        },
-        "secondary": {
-          "type": "创造能量场",
-          "info": {
-            "描述": "与创造力和表达相关的能量场",
-            "影响范围": "艺术创作、问题解决、创新思维",
-            "增强方法": "艺术活动、自由表达、接触大自然、打破常规"
-          }
-        },
-        "balance_suggestion": "平衡个人能量场和创造能量场的能量，发挥你的最大潜能"
-      }
-    }
+    success: false,
+    error: "API服务暂时不可用，将使用本地计算方法"
   };
 };

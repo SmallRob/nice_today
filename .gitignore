@@ -15,3 +15,6 @@ biorhythm_env/Lib/site-packages/wheel/cli/__pycache__/__init__.cpython-312.pyc
 backend/services/__pycache__/*
 backend/services/__pycache__/biorhythm_service.cpython-312.pyc
 backend/services/__pycache__/biorhythm_service.cpython-39.pyc
+frontend/build/*
+backend/config/__pycache__/maya_config.cpython-312.pyc
+*.pyc

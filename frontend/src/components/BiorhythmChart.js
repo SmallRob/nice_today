@@ -167,10 +167,26 @@ const BiorhythmChart = ({ data }) => {
   const renderTodaySummary = () => {
     if (todayIndex < 0) return null;
     
-    // 计算整体状态
-    const overallScore = (todayPhysical + todayEmotional + todayIntellectual) / 3;
+    // 计算综合累积值
+    const totalScore = todayPhysical + todayEmotional + todayIntellectual;
+    // 计算整体状态（平均值）
+    const overallScore = totalScore / 3;
     const isExcellent = overallScore > 50;
     const isPoor = overallScore < -50;
+    
+    // 根据综合累积值确定状态
+    const getTotalScoreStatus = (score) => {
+      if (score >= 200) return { text: '极佳', color: 'text-green-600', bg: 'bg-green-100' };
+      if (score >= 100) return { text: '很好', color: 'text-green-500', bg: 'bg-green-50' };
+      if (score >= 50) return { text: '良好', color: 'text-blue-600', bg: 'bg-blue-50' };
+      if (score >= 0) return { text: '一般偏好', color: 'text-blue-500', bg: 'bg-blue-50' };
+      if (score >= -50) return { text: '一般偏低', color: 'text-yellow-600', bg: 'bg-yellow-50' };
+      if (score >= -100) return { text: '较差', color: 'text-orange-600', bg: 'bg-orange-50' };
+      if (score >= -200) return { text: '很差', color: 'text-red-500', bg: 'bg-red-50' };
+      return { text: '极差', color: 'text-red-600', bg: 'bg-red-100' };
+    };
+    
+    const totalStatus = getTotalScoreStatus(totalScore);
     
     return (
       <div className="relative overflow-hidden bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 mb-6 shadow-lg">
@@ -192,7 +208,7 @@ const BiorhythmChart = ({ data }) => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-blue-500 hover:shadow-md transition-shadow duration-200">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center">
@@ -249,49 +265,87 @@ const BiorhythmChart = ({ data }) => {
                 {getRhythmStatus(todayIntellectual)}
               </div>
             </div>
+            
+            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-purple-500 hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center">
+                  <div className="w-4 h-4 rounded-full bg-purple-500 mr-2"></div>
+                  <span className="font-semibold text-gray-900">综合累积值</span>
+                </div>
+                <span className={`text-lg font-bold ${totalScore > 0 ? 'text-green-600' : totalScore < 0 ? 'text-red-600' : 'text-gray-600'}`}>
+                  {totalScore}
+                </span>
+              </div>
+              <div className={`text-sm font-medium px-2 py-1 rounded-full inline-block ${totalStatus.bg} ${totalStatus.color}`}>
+                {totalStatus.text}
+              </div>
+            </div>
           </div>
           
           {/* 今日建议 */}
-          <div className={`rounded-lg p-4 border-l-4 ${
-            todayPhysical > 50 && todayEmotional > 50 && todayIntellectual > 50 ? 
-              'bg-green-50 border-green-500' : 
-            todayPhysical < -50 && todayEmotional < -50 && todayIntellectual < -50 ? 
-              'bg-red-50 border-red-500' : 
-              'bg-blue-50 border-blue-500'
-          }`}>
+          <div className={`rounded-lg p-4 border-l-4 ${totalStatus.bg} border-${totalStatus.color.split('-')[1]}-500`}>
             <div className="flex items-start">
               <div className="flex-shrink-0 mt-1">
-                <svg className={`w-5 h-5 ${
-                  todayPhysical > 50 && todayEmotional > 50 && todayIntellectual > 50 ? 'text-green-600' : 
-                  todayPhysical < -50 && todayEmotional < -50 && todayIntellectual < -50 ? 'text-red-600' : 
-                  'text-blue-600'
-                }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-5 h-5 ${totalStatus.color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
               </div>
               <div className="ml-3">
-                <h4 className="text-sm font-semibold text-gray-900 mb-1">今日建议</h4>
-                {todayPhysical > 50 && todayEmotional > 50 && todayIntellectual > 50 ? (
+                <h4 className="text-sm font-semibold text-gray-900 mb-1">今日综合建议</h4>
+                {totalScore >= 200 ? (
                   <p className="text-sm text-green-700 font-medium">
-                    🌟 今天是您的黄金日！体力、情绪和智力都处于高峰期，适合进行重要决策和创造性工作。
+                    🌟 今天是您的超级黄金日！综合累积值极高，体力、情绪和智力都处于巅峰状态。适合进行重要决策、创造性工作和挑战性活动。充分利用这一天，您可能会有突破性的表现！
                   </p>
-                ) : todayPhysical < -50 && todayEmotional < -50 && todayIntellectual < -50 ? (
-                  <p className="text-sm text-red-700 font-medium">
-                    ⚠️ 今天各项指标较低，建议适当休息，避免重要决策，保持心情平静。
+                ) : totalScore >= 100 ? (
+                  <p className="text-sm text-green-600 font-medium">
+                    ✨ 今天是您的高能日！综合状态非常好，适合处理重要事务、社交活动和创意工作。您的表现将超出平时水平，是实现目标的理想时机。
+                  </p>
+                ) : totalScore >= 50 ? (
+                  <p className="text-sm text-blue-600 font-medium">
+                    👍 今天状态良好，各项指标处于积极水平。适合正常工作和学习，也可以适当安排一些有挑战性的任务。保持积极心态，将是充实的一天。
+                  </p>
+                ) : totalScore >= 0 ? (
+                  <p className="text-sm text-blue-500 font-medium">
+                    😊 今天状态平稳偏好，可以正常开展各项活动。建议合理安排工作和休息，避免过度疲劳。关注自己的情绪变化，保持平和心态。
+                  </p>
+                ) : totalScore >= -50 ? (
+                  <p className="text-sm text-yellow-600 font-medium">
+                    ⚠️ 今天状态一般偏低，建议适当减少工作强度，增加休息时间。避免做重要决策，保持心情平静，注意身体状况。
+                  </p>
+                ) : totalScore >= -100 ? (
+                  <p className="text-sm text-orange-600 font-medium">
+                    ⚠️ 今天综合状态较差，建议以休息和恢复为主。推迟重要决策和高强度活动，保持良好作息，避免情绪波动。
+                  </p>
+                ) : totalScore >= -200 ? (
+                  <p className="text-sm text-red-500 font-medium">
+                    ⚠️ 今天综合状态很差，强烈建议减少活动量，避免压力和冲突。重视休息和放松，可以进行冥想或轻度伸展活动帮助恢复。
                   </p>
                 ) : (
-                  <div className="text-sm text-gray-700 space-y-1">
-                    <p className={todayPhysical > 0 ? "text-green-700" : "text-red-700"}>
-                      💪 {todayPhysical > 0 ? "体力状态良好，适合体育活动。" : "体力状态较低，注意休息。"}
-                    </p>
-                    <p className={todayEmotional > 0 ? "text-green-700" : "text-red-700"}>
-                      😊 {todayEmotional > 0 ? "情绪稳定积极，人际交往顺利。" : "情绪波动可能较大，保持平静。"}
-                    </p>
-                    <p className={todayIntellectual > 0 ? "text-green-700" : "text-red-700"}>
-                      🧠 {todayIntellectual > 0 ? "思维敏捷，适合学习和创造性工作。" : "思维效率可能降低，避免复杂决策。"}
-                    </p>
-                  </div>
+                  <p className="text-sm text-red-700 font-medium">
+                    ⚠️ 今天是低谷期，综合累积值极低。请务必注意休息，避免任何重要决策和高强度活动。保持心情平静，专注于自我照顾和恢复。
+                  </p>
                 )}
+                
+                <div className="mt-3 text-sm text-gray-700 space-y-1">
+                  <p className={todayPhysical > 0 ? "text-green-700" : "text-red-700"}>
+                    💪 {todayPhysical > 50 ? "体力充沛，适合高强度运动和体力活动。" : 
+                       todayPhysical > 0 ? "体力状态良好，适合适度运动。" : 
+                       todayPhysical > -50 ? "体力状态一般，注意适当休息。" : 
+                       "体力状态较差，建议多休息，避免剧烈运动。"}
+                  </p>
+                  <p className={todayEmotional > 0 ? "text-green-700" : "text-red-700"}>
+                    😊 {todayEmotional > 50 ? "情绪非常积极，人际关系和沟通将特别顺利。" : 
+                       todayEmotional > 0 ? "情绪稳定积极，适合社交活动。" : 
+                       todayEmotional > -50 ? "情绪略有波动，保持平静心态。" : 
+                       "情绪可能较低落，避免压力和冲突，关注自我情绪调节。"}
+                  </p>
+                  <p className={todayIntellectual > 0 ? "text-green-700" : "text-red-700"}>
+                    🧠 {todayIntellectual > 50 ? "思维特别敏捷，创造力和解决问题能力处于高峰。" : 
+                       todayIntellectual > 0 ? "思维清晰，适合学习和创造性工作。" : 
+                       todayIntellectual > -50 ? "思维效率一般，适合处理常规任务。" : 
+                       "思维效率可能降低，避免复杂决策和高难度思考任务。"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

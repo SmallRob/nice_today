@@ -368,13 +368,19 @@ const MayaCalendar = ({ apiBaseUrl }) => {
       if (result.success) {
         console.log(`API返回的玛雅日历数据: ${result.mayaInfoList.length}天`);
         console.log('日期列表:', result.mayaInfoList.map(info => info.date));
-        setMayaInfoList(result.mayaInfoList);
+        
+        // 确保数据按日期排序
+        const sortedMayaInfoList = [...result.mayaInfoList].sort((a, b) => {
+          return new Date(a.date) - new Date(b.date);
+        });
+        
+        setMayaInfoList(sortedMayaInfoList);
         setDateRange(result.dateRange);
         
         // 默认选择今天的数据
         const today = new Date().toISOString().split('T')[0];
-        const todayInfo = result.mayaInfoList.find(info => info.date === today);
-        setSelectedMayaInfo(todayInfo || result.mayaInfoList[0]);
+        const todayInfo = sortedMayaInfoList.find(info => info.date === today);
+        setSelectedMayaInfo(todayInfo || sortedMayaInfoList[0]);
         setError(null);
         
         // 加载历史记录
@@ -437,7 +443,6 @@ const MayaCalendar = ({ apiBaseUrl }) => {
     } else {
       console.log('本地数据中未找到，将请求API获取');
       // 如果在已加载数据中找不到，则请求特定日期的数据
-      // 但不再添加到日历选择栏中，保持固定显示天数
       loadSpecificDateInfo(dateStr);
     }
   };
@@ -483,8 +488,17 @@ const MayaCalendar = ({ apiBaseUrl }) => {
         // 更新选中的玛雅日历信息
         setSelectedMayaInfo(result.mayaInfo);
         
-        // 不再将新获取的信息添加到列表中，保持日历选择栏显示固定天数
-        // 仅更新历史记录
+        // 检查是否已经存在该日期的信息
+        const existingIndex = mayaInfoList.findIndex(info => info.date === dateStr);
+        if (existingIndex === -1) {
+          // 如果不存在，则添加到列表中
+          const updatedList = [...mayaInfoList, result.mayaInfo].sort((a, b) => {
+            return new Date(a.date) - new Date(b.date);
+          });
+          setMayaInfoList(updatedList);
+        }
+        
+        // 更新历史记录
         updateHistory(dateStr);
         
         setError(null);
@@ -573,31 +587,33 @@ return (
           <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
           玛雅日历基础知识
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <div className="text-center p-4 bg-red-50 rounded-xl border border-red-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="w-12 h-12 bg-red-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold shadow-sm">印</div>
-            <p className="text-sm font-medium">红色印记</p>
-            <p className="text-xs text-gray-600">开始、启动</p>
-          </div>
-          <div className="text-center p-4 bg-white rounded-xl border border-gray-300 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="w-12 h-12 bg-white border-2 border-gray-300 rounded-full mx-auto mb-2 flex items-center justify-center text-gray-700 font-bold shadow-sm">风</div>
-            <p className="text-sm font-medium">白色风</p>
-            <p className="text-xs text-gray-600">沟通、灵感</p>
-          </div>
-          <div className="text-center p-4 bg-blue-50 rounded-xl border border-blue-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="w-12 h-12 bg-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold shadow-sm">夜</div>
-            <p className="text-sm font-medium">蓝色夜</p>
-            <p className="text-xs text-gray-600">梦想、直觉</p>
-          </div>
-          <div className="text-center p-4 bg-yellow-50 rounded-xl border border-yellow-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="w-12 h-12 bg-yellow-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold shadow-sm">种</div>
-            <p className="text-sm font-medium">黄色种子</p>
-            <p className="text-xs text-gray-600">觉醒、成长</p>
-          </div>
-          <div className="text-center p-4 bg-green-50 rounded-xl border border-green-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="w-12 h-12 bg-green-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold shadow-sm">地</div>
-            <p className="text-sm font-medium">绿色地球</p>
-            <p className="text-xs text-gray-600">同步、和谐</p>
+        <div className="flex overflow-x-auto w-full">
+          <div className="flex-1 min-w-0 flex space-x-1">
+            <div className="flex-1 text-center p-2 bg-red-50 rounded-xl border border-red-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="w-10 h-10 bg-red-500 rounded-full mx-auto mb-1 flex items-center justify-center text-white font-bold shadow-sm">印</div>
+              <p className="text-sm font-medium text-red-700">红</p>
+              <p className="text-xs text-gray-600 truncate">启动</p>
+            </div>
+            <div className="flex-1 text-center p-2 bg-white rounded-xl border border-gray-300 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="w-10 h-10 bg-white border-2 border-gray-300 rounded-full mx-auto mb-1 flex items-center justify-center text-gray-700 font-bold shadow-sm">风</div>
+              <p className="text-sm font-medium text-gray-700">白</p>
+              <p className="text-xs text-gray-600 truncate">沟通</p>
+            </div>
+            <div className="flex-1 text-center p-2 bg-blue-50 rounded-xl border border-blue-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="w-10 h-10 bg-blue-500 rounded-full mx-auto mb-1 flex items-center justify-center text-white font-bold shadow-sm">夜</div>
+              <p className="text-sm font-medium text-blue-700">蓝</p>
+              <p className="text-xs text-gray-600 truncate">直觉</p>
+            </div>
+            <div className="flex-1 text-center p-2 bg-yellow-50 rounded-xl border border-yellow-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="w-10 h-10 bg-yellow-500 rounded-full mx-auto mb-1 flex items-center justify-center text-white font-bold shadow-sm">种</div>
+              <p className="text-sm font-medium text-yellow-700">黄</p>
+              <p className="text-xs text-gray-600 truncate">觉醒</p>
+            </div>
+            <div className="flex-1 text-center p-2 bg-green-50 rounded-xl border border-green-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="w-10 h-10 bg-green-500 rounded-full mx-auto mb-1 flex items-center justify-center text-white font-bold shadow-sm">地</div>
+              <p className="text-sm font-medium text-green-700">绿</p>
+              <p className="text-xs text-gray-600 truncate">和谐</p>
+            </div>
           </div>
         </div>
       </div>
@@ -605,29 +621,30 @@ return (
       {/* 日期选择区域 */}
       <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
         <div className="flex flex-col sm:flex-row items-center justify-between mb-4">
-          <div className="mb-4 sm:mb-0">
+          <div className="mb-4 sm:mb-0 w-full sm:w-auto">
             <h3 className="text-lg font-medium flex items-center">
               <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-              选择查询日期
+              选择日期
             </h3>
-            <p className="text-sm text-gray-500 mt-1">
-              点击日期标签快速切换，或使用日期选择器查看特定日期的玛雅启示
+            <p className="text-sm text-gray-500 mt-1 whitespace-nowrap overflow-hidden text-ellipsis">
+              点击标签快速切换
             </p>
           </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-500">选择日期:</span>
-            <DatePicker
-              selected={selectedDate}
-              onChange={handleDateChange}
-              dateFormat="yyyy-MM-dd"
-              className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center shadow-sm"
-            />
-            <button
-              onClick={() => handleDateChange(new Date())}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg transition-colors duration-200 text-sm shadow-sm hover:shadow-md"
-            >
-              今日
-            </button>
+          <div className="inline-flex items-center w-full sm:w-auto justify-end">
+            <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+              <DatePicker
+                selected={selectedDate}
+                onChange={handleDateChange}
+                dateFormat="yyyy-MM-dd"
+                className="px-2 py-1 focus:outline-none text-center text-sm w-24 border-0"
+              />
+              <button
+                onClick={() => handleDateChange(new Date())}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 text-sm border-l border-blue-600"
+              >
+                今日
+              </button>
+            </div>
           </div>
         </div>
         
@@ -682,8 +699,8 @@ return (
         </div>
         
         {/* 提示信息 */}
-        <div className="mt-2 text-xs text-gray-500 text-center">
-          快速选择标签显示最近7天，您也可以使用上方日期选择器查看任意日期的玛雅启示
+        <div className="mt-2 text-xs text-gray-500 text-center whitespace-nowrap overflow-hidden text-ellipsis">
+          快速选择标签显示最近7天，使用日期选择器查看任意日期
         </div>
       </div>
       
