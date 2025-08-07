@@ -1,5 +1,23 @@
 import datetime
 
+def get_date_str(date_obj=None):
+    """获取日期字符串，格式为YYYY-MM-DD"""
+    if date_obj is None:
+        date_obj = datetime.datetime.now()
+    elif isinstance(date_obj, str):
+        return date_obj
+    return date_obj.strftime("%Y-%m-%d")
+
+def get_weekday(date_input=None):
+    """获取星期几，返回中文星期几"""
+    if date_input is None:
+        date_input = datetime.datetime.now()
+    elif isinstance(date_input, str):
+        date_input = datetime.datetime.strptime(date_input, "%Y-%m-%d")
+    
+    weekdays = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
+    return weekdays[date_input.weekday()]
+
 def normalize_date_string(date_str: str) -> str:
     """标准化日期字符串，确保格式为YYYY-MM-DD"""
     try:

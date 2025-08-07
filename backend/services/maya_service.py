@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, date
 import random
 import math
 from typing import List, Dict, Any, Tuple, Optional
-from utils.date_utils import normalize_date_string, parse_date
+from utils.date_utils import normalize_date_string, parse_date, get_date_str, get_weekday
 from config.maya_config import (
     MAYA_SEAL_LIST, MAYA_SEALS, MAYA_TONE_LIST, MAYA_TONES, 
     MAYA_MONTHS, SUGGESTIONS, LUCKY_ITEMS, DAILY_QUOTES, 
@@ -21,15 +21,6 @@ MAYA_CALENDAR_ROUND = 18980  # 玛雅历轮回（52年）
 
 # 玛雅长历起始日期（格里高利历）- 更精确的日期
 MAYA_EPOCH = datetime(2012, 12, 21)  # 第13个巴克顿周期结束日期
-
-def get_date_str(date_obj: datetime) -> str:
-    """获取日期字符串"""
-    return date_obj.strftime("%Y-%m-%d")
-
-def get_weekday(date_obj: datetime) -> str:
-    """获取星期几"""
-    weekdays = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
-    return weekdays[date_obj.weekday()]
 
 def calculate_kin_number(date_obj: datetime) -> int:
     """

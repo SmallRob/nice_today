@@ -18,3 +18,6 @@ backend/services/__pycache__/biorhythm_service.cpython-39.pyc
 frontend/build/*
 backend/config/__pycache__/maya_config.cpython-312.pyc
 *.pyc
+backend/.DS_Store
+frontend/.DS_Store
+*.DS_Store
