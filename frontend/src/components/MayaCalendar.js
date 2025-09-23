@@ -6,6 +6,61 @@ import { fetchMayaCalendarRange, fetchSpecificDateMayaInfo, formatDateString } f
 
 // 玛雅日历工具类 - 集中管理所有辅助功能
 class MayaCalendarUtils {
+  // 标准玛雅历法计算（基于KIN 183校准）
+  static calculateMayaDate(gregorianDate) {
+    // 13种调性（银河音调）
+    const TONES = [
+      '磁性', '月亮', '电力', '自我存在', '超频', '韵律', '共振',
+      '银河', '太阳', '行星', '光谱', '水晶', '宇宙'
+    ];
+    
+    // 20种图腾（太阳印记）
+    const SEALS = [
+      '红龙', '白风', '蓝夜', '黄种子', '红蛇', '白世界桥', '蓝手', '黄星星',
+      '红月', '白狗', '蓝猴', '黄人', '红天行者', '白巫师', '蓝鹰', '黄战士',
+      '红地球', '白镜', '蓝风暴', '黄太阳'
+    ];
+    
+    // 使用已知正确的参考点：2025年9月23日 = KIN 183 磁性的蓝夜
+    const REFERENCE_DATE = new Date('2025-09-23');
+    const REFERENCE_KIN = 183;
+    
+    // 计算目标日期
+    const targetDate = new Date(gregorianDate);
+    
+    // 计算从参考日期到目标日期的天数
+    const timeDiff = targetDate.getTime() - REFERENCE_DATE.getTime();
+    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    
+    // 计算KIN数（1-260的循环）
+    let kin = REFERENCE_KIN + daysDiff;
+    kin = ((kin - 1) % 260) + 1;
+    
+    // 从KIN数计算调性和图腾
+    const toneIndex = (kin - 1) % 13;
+    const sealIndex = (kin - 1) % 20;
+    
+    const tone = TONES[toneIndex];
+    const seal = SEALS[sealIndex];
+    
+    return {
+      kin: kin,
+      tone: tone,
+      seal: seal,
+      fullName: `${tone}的${seal}`,
+      daysDiff: daysDiff,
+      toneIndex: toneIndex,
+      sealIndex: sealIndex
+    };
+  }
+  
+  // 验证今日计算结果
+  static verifyTodayCalculation() {
+    const today = new Date('2025-09-23');
+    const result = this.calculateMayaDate(today);
+    console.log('2025年9月23日玛雅历法计算结果:', result);
+    return result;
+  }
   // 能量提示生成器
   static getTip(score) {
     let tip = '';
@@ -354,6 +409,7 @@ const MayaCalendar = ({ apiBaseUrl }) => {
   const [dateRange, setDateRange] = useState({ start: null, end: null });
   const [historyDates, setHistoryDates] = useState([]);
 
+
   useEffect(() => {
     const loadMayaCalendarRange = async () => {
       if (!apiBaseUrl) {
@@ -385,6 +441,8 @@ const MayaCalendar = ({ apiBaseUrl }) => {
         
         // 加载历史记录
         loadHistoryDates();
+        
+
       } else {
         setError(result.error);
       }
@@ -1045,6 +1103,7 @@ return (
           </p>
         </div>
       </div>
+
     </div>
   );
 };

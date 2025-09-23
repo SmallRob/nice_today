@@ -19,25 +19,61 @@ MAYA_TZOLKIN_CYCLE = 260  # 玛雅神圣历周期（260天）
 MAYA_HAAB_CYCLE = 365     # 玛雅太阳历周期（365天）
 MAYA_CALENDAR_ROUND = 18980  # 玛雅历轮回（52年）
 
-# 玛雅长历起始日期（格里高利历）- 更精确的日期
-MAYA_EPOCH = datetime(2012, 12, 21)  # 第13个巴克顿周期结束日期
+# 玛雅历法参考点（与前端保持一致）
+MAYA_REFERENCE_DATE = datetime(2025, 9, 23)  # 2025年9月23日 = 磁性的蓝夜
+MAYA_REFERENCE_TONE_INDEX = 0  # 磁性
+MAYA_REFERENCE_SEAL_INDEX = 2  # 蓝夜
+
+def calculate_maya_date_info(date_obj: datetime) -> Dict[str, Any]:
+    """
+    计算给定日期的玛雅历法信息（基于KIN 183校准）
+    返回KIN码、调性和图腾信息
+    """
+    # 13种调性（银河音调）
+    TONES = [
+        '磁性', '月亮', '电力', '自我存在', '超频', '韵律', '共振',
+        '银河', '太阳', '行星', '光谱', '水晶', '宇宙'
+    ]
+    
+    # 20种图腾（太阳印记）
+    SEALS = [
+        '红龙', '白风', '蓝夜', '黄种子', '红蛇', '白世界桥', '蓝手', '黄星星',
+        '红月', '白狗', '蓝猴', '黄人', '红天行者', '白巫师', '蓝鹰', '黄战士',
+        '红地球', '白镜', '蓝风暴', '黄太阳'
+    ]
+    
+    # 使用已知正确的参考点：2025年9月23日 = KIN 183 磁性的蓝夜
+    REFERENCE_KIN = 183
+    
+    # 计算从参考日期到目标日期的天数
+    days_diff = (date_obj - MAYA_REFERENCE_DATE).days
+    
+    # 计算KIN数（1-260的循环）
+    kin = REFERENCE_KIN + days_diff
+    kin = ((kin - 1) % 260) + 1
+    
+    # 从KIN数计算调性和图腾
+    tone_index = (kin - 1) % 13
+    seal_index = (kin - 1) % 20
+    
+    tone_name = TONES[tone_index]
+    seal_name = SEALS[seal_index]
+    
+    return {
+        "kin": kin,
+        "tone_name": tone_name,
+        "seal_name": seal_name,
+        "tone_index": tone_index,
+        "seal_index": seal_index,
+        "full_name": f"{tone_name}的{seal_name}"
+    }
 
 def calculate_kin_number(date_obj: datetime) -> int:
     """
-    计算给定日期的KIN码
-    使用更精确的计算方法，考虑了玛雅历的特殊规则
+    计算给定日期的KIN码（使用新算法）
     """
-    # 计算日期差
-    days_diff = (date_obj - MAYA_EPOCH).days
-    
-    # 计算KIN码（1-260循环）
-    kin = (days_diff % MAYA_TZOLKIN_CYCLE)
-    
-    # 玛雅历中KIN码从1开始，而不是0
-    if kin <= 0:
-        kin += MAYA_TZOLKIN_CYCLE
-    
-    return kin
+    maya_info = calculate_maya_date_info(date_obj)
+    return maya_info["kin"]
 
 def get_maya_seal(kin: int) -> Dict[str, Any]:
     """
@@ -340,14 +376,15 @@ def check_special_date(date_obj: datetime) -> Optional[Dict[str, Any]]:
 def generate_maya_info(date_obj: datetime) -> Dict[str, Any]:
     """
     生成指定日期的玛雅日历信息
-    使用更精确的计算方法和更丰富的信息
+    使用与前端一致的计算方法
     """
     # 基础日期信息
     date_str = get_date_str(date_obj)
     weekday = get_weekday(date_obj)
     
-    # 计算KIN码
-    kin = calculate_kin_number(date_obj)
+    # 使用新的算法计算玛雅历法信息
+    maya_date_info = calculate_maya_date_info(date_obj)
+    kin = maya_date_info["kin"]
     
     # 获取玛雅印记和音调（包含详细信息）
     seal_info = get_maya_seal(kin)
@@ -356,8 +393,8 @@ def generate_maya_info(date_obj: datetime) -> Dict[str, Any]:
     # 获取玛雅月份和天数
     maya_month_info = calculate_maya_month(date_obj)
     
-    # 生成玛雅印记描述
-    seal_desc = f"{tone_info['name']}的{seal_info['name']}"
+    # 生成玛雅印记描述（使用新算法的结果）
+    seal_desc = maya_date_info["full_name"]
     
     # 获取个性化建议和禁忌
     suggestions = get_personalized_suggestions(date_obj, kin)
@@ -378,20 +415,25 @@ def generate_maya_info(date_obj: datetime) -> Dict[str, Any]:
     maya_info = {
         "date": date_str,
         "weekday": weekday,
-        "maya_kin": f"KIN{kin}",
-        "maya_tone": maya_month_info["display"],
+        "maya_kin": kin,  # 直接返回数字，不加前缀
+        "maya_tone": maya_date_info["tone_name"],  # 使用新算法的调性
         "maya_month": maya_month_info,
-        "maya_seal": seal_info["name"],
+        "maya_seal": maya_date_info["seal_name"],  # 使用新算法的图腾
         "maya_seal_info": seal_info["details"],
         "maya_tone_info": tone_info["details"],
-        "maya_seal_desc": seal_desc,
+        "maya_seal_desc": seal_desc,  # 完整描述：调性的图腾
         "suggestions": suggestions,
         "lucky_items": lucky_items,
         "daily_message": inspiration["message"],
         "daily_quote": inspiration["quote"],
         "energy_scores": energy_info["scores"],
         "energy_details": energy_info["details"],
-        "special_date": special_date
+        "special_date": special_date,
+        "daily_guidance": {
+            "morning": "保持平静的心态，专注于当下的任务",
+            "afternoon": "处理重要事务，保持专注和耐心",
+            "evening": "放松身心，回顾今日的收获和成长"
+        }
     }
     
     return maya_info
