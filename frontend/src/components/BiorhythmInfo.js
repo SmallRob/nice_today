@@ -80,51 +80,101 @@ const getPredictionTip = (type, value, title) => {
   }
 };
 
-// 生成当月节律高低点数据
-const generateMonthlyHighLowData = () => {
+// 计算生物节律值的核心函数
+const calculateRhythmValue = (cycle, daysSinceBirth) => {
+  return Math.round(100 * Math.sin(2 * Math.PI * daysSinceBirth / cycle));
+};
+
+// 计算指定日期的生物节律
+const calculateBiorhythmForDate = (birthDate, targetDate) => {
+  const birth = new Date(birthDate);
+  const target = new Date(targetDate);
+  const daysSinceBirth = Math.floor((target - birth) / (1000 * 60 * 60 * 24));
+  
+  return {
+    physical: calculateRhythmValue(23, daysSinceBirth),
+    emotional: calculateRhythmValue(28, daysSinceBirth),
+    intellectual: calculateRhythmValue(33, daysSinceBirth)
+  };
+};
+
+// 找到指定月份的节律高低点
+const findMonthlyHighLowPoints = (birthDate, year, month) => {
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  let highPoint = { date: null, value: -101, physical: -101, emotional: -101, intellectual: -101 };
+  let lowPoint = { date: null, value: 101, physical: 101, emotional: 101, intellectual: 101 };
+  
+  // 遍历该月每一天
+  for (let day = 1; day <= daysInMonth; day++) {
+    const currentDate = new Date(year, month, day);
+    const rhythm = calculateBiorhythmForDate(birthDate, currentDate);
+    
+    // 计算综合节律值（加权平均）
+    const combinedValue = Math.round(
+      (rhythm.physical * 0.33 + rhythm.emotional * 0.33 + rhythm.intellectual * 0.34)
+    );
+    
+    // 更新高点
+    if (combinedValue > highPoint.value) {
+      highPoint = {
+        date: currentDate,
+        value: combinedValue,
+        physical: rhythm.physical,
+        emotional: rhythm.emotional,
+        intellectual: rhythm.intellectual
+      };
+    }
+    
+    // 更新低点
+    if (combinedValue < lowPoint.value) {
+      lowPoint = {
+        date: currentDate,
+        value: combinedValue,
+        physical: rhythm.physical,
+        emotional: rhythm.emotional,
+        intellectual: rhythm.intellectual
+      };
+    }
+  }
+  
+  return { highPoint, lowPoint };
+};
+
+// 生成基于真实出生日期的当月节律高低点数据
+const generateMonthlyHighLowData = (birthDate) => {
+  if (!birthDate) {
+    // 如果没有出生日期，返回空数据
+    return [];
+  }
+  
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const monthlyData = [];
   
-  // 为每个月生成数据
+  // 为每个月计算真实的节律高低点
   for (let month = 0; month < 12; month++) {
     const monthName = `${month + 1}月`;
-    
-    // 生成高点数据
-    const highDate = new Date(currentYear, month, Math.floor(Math.random() * 28) + 1);
-    const highDateStr = `${currentYear}-${String(month + 1).padStart(2, '0')}-${String(highDate.getDate()).padStart(2, '0')}`;
-    const highValue = (Math.random() * 2 + 0.5).toFixed(2);
-    const physicalHigh = (Math.random() * 1.5 - 0.5).toFixed(2);
-    const emotionalHigh = (Math.random() * 1.5 - 0.5).toFixed(2);
-    const intellectualHigh = (Math.random() * 1.5 - 0.5).toFixed(2);
-    
-    // 生成低点数据
-    const lowDate = new Date(currentYear, month, Math.floor(Math.random() * 28) + 1);
-    const lowDateStr = `${currentYear}-${String(month + 1).padStart(2, '0')}-${String(lowDate.getDate()).padStart(2, '0')}`;
-    const lowValue = (-Math.random() * 2 - 0.5).toFixed(2);
-    const physicalLow = (Math.random() * 1.5 - 0.5).toFixed(2);
-    const emotionalLow = (Math.random() * 1.5 - 0.5).toFixed(2);
-    const intellectualLow = (Math.random() * 1.5 - 0.5).toFixed(2);
+    const { highPoint, lowPoint } = findMonthlyHighLowPoints(birthDate, currentYear, month);
     
     monthlyData.push({
       month: monthName,
-      highDate: highDateStr,
-      highValue: highValue,
-      physicalHigh: physicalHigh,
-      emotionalHigh: emotionalHigh,
-      intellectualHigh: intellectualHigh,
-      lowDate: lowDateStr,
-      lowValue: lowValue,
-      physicalLow: physicalLow,
-      emotionalLow: emotionalLow,
-      intellectualLow: intellectualLow
+      highDate: highPoint.date ? highPoint.date.toISOString().split('T')[0] : '',
+      highValue: highPoint.value,
+      physicalHigh: highPoint.physical,
+      emotionalHigh: highPoint.emotional,
+      intellectualHigh: highPoint.intellectual,
+      lowDate: lowPoint.date ? lowPoint.date.toISOString().split('T')[0] : '',
+      lowValue: lowPoint.value,
+      physicalLow: lowPoint.physical,
+      emotionalLow: lowPoint.emotional,
+      intellectualLow: lowPoint.intellectual
     });
   }
   
   return monthlyData;
 };
 
-const BiorhythmInfo = ({ data, title }) => {
+const BiorhythmInfo = ({ data, title, birthDate }) => {
   if (!data) {
     return (
       <div className="bg-white shadow rounded-lg p-6">
@@ -170,8 +220,8 @@ const BiorhythmInfo = ({ data, title }) => {
     { key: 'combined', name: '综合', value: combinedValue }
   ];
 
-  // 生成当月节律高低点数据
-  const monthlyHighLowData = generateMonthlyHighLowData();
+  // 生成基于真实出生日期的当月节律高低点数据
+  const monthlyHighLowData = generateMonthlyHighLowData(birthDate);
 
   // 显示生物节律科学依据卡片
   const renderScienceCard = () => (
@@ -196,10 +246,31 @@ const BiorhythmInfo = ({ data, title }) => {
   );
 
   // 渲染当月节律高低点表格
-  const renderMonthlyHighLowTable = () => (
-    <div className="bg-white shadow rounded-lg p-6 border border-gray-100 mt-8">
-      <h3 className="text-xl font-bold text-gray-800 mb-4">每月节律高低点</h3>
-      <div className="overflow-x-auto">
+  const renderMonthlyHighLowTable = () => {
+    if (!birthDate || monthlyHighLowData.length === 0) {
+      return (
+        <div className="bg-white shadow rounded-lg p-6 border border-gray-100 mt-8">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">每月节律高低点</h3>
+          <div className="text-center py-8 text-gray-500">
+            <svg className="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            请先输入出生日期以查看准确的节律高低点数据
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="bg-white shadow rounded-lg p-6 border border-gray-100 mt-8">
+        <h3 className="text-xl font-bold text-gray-800 mb-4">每月节律高低点</h3>
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-sm text-blue-800">
+            <span className="font-semibold">基于出生日期：</span>{birthDate} 
+            <span className="ml-2 text-blue-600">| 计算依据：体力(23天)、情绪(28天)、智力(33天)周期</span>
+          </p>
+        </div>
+        <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
           <thead>
             <tr className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
@@ -239,7 +310,8 @@ const BiorhythmInfo = ({ data, title }) => {
         </table>
       </div>
     </div>
-  );
+    );
+  };
 
   // 渲染24小时人体器官节律表格
   const render24HourOrganRhythm = () => (

@@ -234,12 +234,20 @@ const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
           <div className="space-y-6">
             <div className="bg-white shadow rounded-lg p-6">
               <h2 className="text-xl font-semibold mb-4">生物节律科学依据</h2>
-              <BiorhythmInfo data={todayData} title="今日" />
+              <BiorhythmInfo 
+                data={todayData} 
+                title="今日" 
+                birthDate={birthDate ? birthDate.toISOString().split('T')[0] : null} 
+              />
             </div>
             
             <div className="bg-white shadow rounded-lg p-6">
               <h2 className="text-xl font-semibold mb-4">7天后节律</h2>
-              <BiorhythmInfo data={futureData} title="7天后" />
+              <BiorhythmInfo 
+                data={futureData} 
+                title="7天后" 
+                birthDate={birthDate ? birthDate.toISOString().split('T')[0] : null} 
+              />
             </div>
           </div>
         </>
