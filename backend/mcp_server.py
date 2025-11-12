@@ -14,6 +14,9 @@ from services.biorhythm_service import (
 from services.dress_service import (
     get_today_dress_info, get_date_dress_info, get_dress_info_range
 )
+from services.biorhythm_life_guide_service import (
+    get_biorhythm_life_guide, get_today_biorhythm_guide
+)
 from utils.date_utils import normalize_date_string
 
 # 配置日志
@@ -119,6 +122,22 @@ dress_range_schema = ToolSchema(
     }
 )
 
+# 新的综合生活指南工具模式
+biorhythm_life_guide_schema = ToolSchema(
+    properties={
+        "birth_date": {"type": "string", "description": "出生日期，格式为YYYY-MM-DD"},
+        "location": {"type": "string", "description": "地理位置（可选）", "default": ""}
+    },
+    required=["birth_date"]
+)
+
+biorhythm_today_guide_schema = ToolSchema(
+    properties={
+        "birth_date": {"type": "string", "description": "出生日期，格式为YYYY-MM-DD"}
+    },
+    required=["birth_date"]
+)
+
 # 定义工具列表
 tools = [
     Tool(
@@ -155,6 +174,16 @@ tools = [
         name="get_history",
         description="获取历史查询的出生日期",
         schema=ToolSchema(properties={})
+    ),
+    Tool(
+        name="get_biorhythm_life_guide",
+        description="获取综合生物节律生活指南（包含生物节律、穿衣建议、饮食建议等）",
+        schema=biorhythm_life_guide_schema
+    ),
+    Tool(
+        name="get_today_biorhythm_guide",
+        description="获取今日生物节律生活指南",
+        schema=biorhythm_today_guide_schema
     )
 ]
 
@@ -209,6 +238,15 @@ async def handle_tool_call(method: str, params: Dict[str, Any]) -> Any:
         
         elif method == "get_history":
             return {"history": get_history()}
+        
+        elif method == "get_biorhythm_life_guide":
+            birth_date = normalize_date_string(params["birth_date"])
+            location = params.get("location", "")
+            return get_biorhythm_life_guide(birth_date, location)
+        
+        elif method == "get_today_biorhythm_guide":
+            birth_date = normalize_date_string(params["birth_date"])
+            return get_today_biorhythm_guide(birth_date)
         
         else:
             raise ValueError(f"未知的方法: {method}")
