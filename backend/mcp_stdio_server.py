@@ -1,11 +1,16 @@
+#!/usr/bin/env python3
+"""
+MCP服务器 - stdio模式版本
+专门用于通过stdio方式运行的MCP服务器
+"""
+
 import asyncio
 import json
 import logging
 import os
+import sys
 from typing import Dict, Any, List, Optional
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from services.biorhythm_service import (
@@ -23,24 +28,9 @@ from utils.date_utils import normalize_date_string
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler("mcp_server.log")
-    ]
+    handlers=[logging.StreamHandler(sys.stderr)]
 )
-logger = logging.getLogger("mcp_server")
-
-# 创建FastAPI应用
-app = FastAPI(title="生物节律MCP服务器", description="提供生物节律数据的MCP服务器")
-
-# 启用跨域资源共享
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # 允许所有来源
-    allow_credentials=True,
-    allow_methods=["*"],  # 允许所有方法
-    allow_headers=["*"],  # 允许所有头
-)
+logger = logging.getLogger("mcp_stdio_server")
 
 # MCP协议相关模型
 class MCPRequest(BaseModel):
@@ -68,7 +58,6 @@ class ToolSchema(BaseModel):
 class Tool(BaseModel):
     name: str
     description: str
-    # 修改字段名，使用alias保持与MCP协议的兼容性
     tool_schema: ToolSchema = Field(..., alias='schema')
     
     model_config = {
@@ -82,7 +71,6 @@ class ServerInfo(BaseModel):
     description: str = "提供生物节律和穿衣建议的MCP服务器"
     vendor: str = "Nice Day"
     tools: List[Tool] = []
-    resources: List[Dict[str, Any]] = []
 
 # 定义工具模式
 biorhythm_today_schema = ToolSchema(
@@ -123,7 +111,6 @@ dress_range_schema = ToolSchema(
     }
 )
 
-# 新的综合生活指南工具模式
 biorhythm_life_guide_schema = ToolSchema(
     properties={
         "birth_date": {"type": "string", "description": "出生日期，格式为YYYY-MM-DD"},
@@ -191,22 +178,6 @@ tools = [
 # 创建服务器信息
 server_info = ServerInfo(tools=tools)
 
-# 连接管理
-class ConnectionManager:
-    def __init__(self):
-        self.active_connections: List[WebSocket] = []
-
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
-        logger.info(f"客户端连接成功，当前连接数: {len(self.active_connections)}")
-
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
-        logger.info(f"客户端断开连接，当前连接数: {len(self.active_connections)}")
-
-manager = ConnectionManager()
-
 # 工具处理函数
 async def handle_tool_call(method: str, params: Dict[str, Any]) -> Any:
     try:
@@ -256,74 +227,102 @@ async def handle_tool_call(method: str, params: Dict[str, Any]) -> Any:
         logger.error(f"处理工具调用时出错: {str(e)}", exc_info=True)
         raise e
 
-# WebSocket端点
-@app.websocket("/mcp")
-async def websocket_endpoint(websocket: WebSocket):
-    await manager.connect(websocket)
-    try:
-        while True:
-            # 接收消息
-            data = await websocket.receive_text()
-            logger.info(f"收到消息: {data}")
+# stdio模式的主循环
+async def main():
+    """stdio模式的主循环"""
+    logger.info("🚀 MCP服务器启动 (stdio模式)")
+    
+    while True:
+        try:
+            # 从stdin读取请求
+            line = await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)
+            if not line:
+                break
+                
+            line = line.strip()
+            if not line:
+                continue
+            
+            logger.info(f"收到请求: {line}")
             
             try:
                 # 解析请求
-                request_data = json.loads(data)
+                request_data = json.loads(line)
                 request = MCPRequest(**request_data)
                 
                 # 处理请求
-                if request.method == "server.info":
-                    # 返回服务器信息
-                    response = MCPResponse(
-                        id=request.id,
-                        result=server_info.dict(by_alias=True)  # 使用别名
-                    )
+                if request.method == "initialize":
+                    # 初始化响应
+                    response = {
+                        "jsonrpc": "2.0",
+                        "id": request.id,
+                        "result": {
+                            "protocolVersion": "2025-06-18",
+                            "capabilities": {},
+                            "serverInfo": server_info.model_dump(by_alias=True)
+                        }
+                    }
+                elif request.method == "tools/list":
+                    # 工具列表响应
+                    response = {
+                        "jsonrpc": "2.0",
+                        "id": request.id,
+                        "result": {
+                            "tools": [tool.model_dump(by_alias=True) for tool in tools]
+                        }
+                    }
+                elif request.method == "tools/call":
+                    # 工具调用
+                    params = request.params
+                    tool_name = params.get("name")
+                    arguments = params.get("arguments", {})
+                    
+                    result = await handle_tool_call(tool_name, arguments)
+                    response = {
+                        "jsonrpc": "2.0",
+                        "id": request.id,
+                        "result": {
+                            "content": [{
+                                "type": "text",
+                                "text": json.dumps(result, ensure_ascii=False, indent=2)
+                            }]
+                        }
+                    }
                 else:
-                    # 处理工具调用
-                    result = await handle_tool_call(request.method, request.params)
-                    response = MCPResponse(
-                        id=request.id,
-                        result=result
-                    )
+                    # 未知方法
+                    response = {
+                        "jsonrpc": "2.0",
+                        "id": request.id,
+                        "error": {
+                            "code": -32601,
+                            "message": f"Method not found: {request.method}"
+                        }
+                    }
                 
                 # 发送响应
-                await websocket.send_text(json.dumps(response.dict(by_alias=True)))  # 使用别名
-                logger.info(f"发送响应: {response}")
+                response_line = json.dumps(response, ensure_ascii=False) + "\n"
+                sys.stdout.write(response_line)
+                sys.stdout.flush()
+                logger.info(f"发送响应: {response_line.strip()}")
                 
             except Exception as e:
-                # 处理错误
-                error = MCPError(
-                    code=500,
-                    message=str(e)
-                )
-                response = MCPResponse(
-                    id=request_data.get("id", "unknown"),
-                    error=error.dict()
-                )
-                await websocket.send_text(json.dumps(response.dict()))
+                # 错误处理
+                error_response = {
+                    "jsonrpc": "2.0",
+                    "id": request_data.get("id", "unknown"),
+                    "error": {
+                        "code": -32000,
+                        "message": str(e)
+                    }
+                }
+                error_line = json.dumps(error_response, ensure_ascii=False) + "\n"
+                sys.stdout.write(error_line)
+                sys.stdout.flush()
                 logger.error(f"处理请求时出错: {str(e)}", exc_info=True)
-    
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        logger.info("WebSocket连接已关闭")
-
-# HTTP端点，用于健康检查
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy", "server": server_info.name, "version": server_info.version}
-
-# 主页
-@app.get("/")
-async def root():
-    return {
-        "message": "欢迎使用生物节律MCP服务器",
-        "description": server_info.description,
-        "version": server_info.version,
-        "websocket_endpoint": "/mcp",
-        "health_check": "/health"
-    }
+        
+        except Exception as e:
+            logger.error(f"处理消息时出错: {str(e)}", exc_info=True)
+            break
 
 if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("MCP_PORT", 8765))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    asyncio.run(main())
