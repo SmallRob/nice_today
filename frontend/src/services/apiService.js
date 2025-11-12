@@ -83,8 +83,8 @@ export const testApiConnection = async (baseUrl) => {
     
     // 在开发环境中尝试其他常用端口
     if (process.env.NODE_ENV !== 'production') {
-      // 使用环境变量配置的端口，优先使用REACT_APP_BACKEND_PORT，默认为5001
-      const defaultPort = process.env.REACT_APP_BACKEND_PORT || 5001;
+      // 使用环境变量配置的端口，优先使用REACT_APP_BACKEND_PORT，默认为5201
+      const defaultPort = process.env.REACT_APP_BACKEND_PORT || 5201;
       console.log("使用环境变量配置的后端端口:", defaultPort);
       // 添加更多可能的端口，确保defaultPort是第一个尝试的
       const alternativePorts = [defaultPort, 5000, 5020, 8000, 8080];

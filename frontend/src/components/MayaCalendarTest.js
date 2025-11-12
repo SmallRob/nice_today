@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import MayaCalendar from './MayaCalendar_old';
 
 const MayaCalendarTest = () => {
-  const [apiBaseUrl, setApiBaseUrl] = useState('http://localhost:5001');
+  const [apiBaseUrl, setApiBaseUrl] = useState('http://localhost:5201');
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -16,7 +16,7 @@ const MayaCalendarTest = () => {
             value={apiBaseUrl} 
             onChange={(e) => setApiBaseUrl(e.target.value)}
             className="border rounded px-3 py-2 w-full"
-            placeholder="http://localhost:5001"
+            placeholder="http://localhost:5201"
           />
         </div>
 

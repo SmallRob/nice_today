@@ -87,9 +87,22 @@ const calculateRhythmValue = (cycle, daysSinceBirth) => {
 
 // 计算指定日期的生物节律
 const calculateBiorhythmForDate = (birthDate, targetDate) => {
-  const birth = new Date(birthDate);
-  const target = new Date(targetDate);
-  const daysSinceBirth = Math.floor((target - birth) / (1000 * 60 * 60 * 24));
+  // 使用UTC时间避免时区问题
+  const birth = new Date(Date.UTC(
+    parseInt(birthDate.split('-')[0]),
+    parseInt(birthDate.split('-')[1]) - 1,
+    parseInt(birthDate.split('-')[2])
+  ));
+  
+  const target = new Date(Date.UTC(
+    parseInt(targetDate.split('-')[0]),
+    parseInt(targetDate.split('-')[1]) - 1,
+    parseInt(targetDate.split('-')[2])
+  ));
+  
+  // 使用更精确的天数计算方法
+  const diffTime = target.getTime() - birth.getTime();
+  const daysSinceBirth = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   
   return {
     physical: calculateRhythmValue(23, daysSinceBirth),
@@ -100,14 +113,16 @@ const calculateBiorhythmForDate = (birthDate, targetDate) => {
 
 // 找到指定月份的节律高低点
 const findMonthlyHighLowPoints = (birthDate, year, month) => {
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  // 使用UTC时间计算月份天数
+  const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
   let highPoint = { date: null, value: -101, physical: -101, emotional: -101, intellectual: -101 };
   let lowPoint = { date: null, value: 101, physical: 101, emotional: 101, intellectual: 101 };
   
   // 遍历该月每一天
   for (let day = 1; day <= daysInMonth; day++) {
-    const currentDate = new Date(year, month, day);
-    const rhythm = calculateBiorhythmForDate(birthDate, currentDate);
+    // 使用UTC时间格式
+    const currentDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const rhythm = calculateBiorhythmForDate(birthDate, currentDateStr);
     
     // 计算综合节律值（加权平均）
     const combinedValue = Math.round(
@@ -117,7 +132,7 @@ const findMonthlyHighLowPoints = (birthDate, year, month) => {
     // 更新高点
     if (combinedValue > highPoint.value) {
       highPoint = {
-        date: currentDate,
+        date: currentDateStr,
         value: combinedValue,
         physical: rhythm.physical,
         emotional: rhythm.emotional,
@@ -128,7 +143,7 @@ const findMonthlyHighLowPoints = (birthDate, year, month) => {
     // 更新低点
     if (combinedValue < lowPoint.value) {
       lowPoint = {
-        date: currentDate,
+        date: currentDateStr,
         value: combinedValue,
         physical: rhythm.physical,
         emotional: rhythm.emotional,
@@ -158,12 +173,12 @@ const generateMonthlyHighLowData = (birthDate) => {
     
     monthlyData.push({
       month: monthName,
-      highDate: highPoint.date ? highPoint.date.toISOString().split('T')[0] : '',
+      highDate: highPoint.date || '',
       highValue: highPoint.value,
       physicalHigh: highPoint.physical,
       emotionalHigh: highPoint.emotional,
       intellectualHigh: highPoint.intellectual,
-      lowDate: lowPoint.date ? lowPoint.date.toISOString().split('T')[0] : '',
+      lowDate: lowPoint.date || '',
       lowValue: lowPoint.value,
       physicalLow: lowPoint.physical,
       emotionalLow: lowPoint.emotional,
