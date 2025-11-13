@@ -1,158 +1,391 @@
-# Windows PowerShell 一键启动调试脚本 - UTF8
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+<#
+生物节律应用 Windows PowerShell 启动脚本
+优化版本 - 专业的错误处理、日志记录和跨版本兼容性
+#>
 
-# 定义默认端口与虚拟环境
-$BACKEND_PORT = 5020
-$FRONTEND_PORT = 3000
-$VENV_NAME    = "biorhythm_env"
-$VENV_PATH    = "./$VENV_NAME"
-$USE_CONDA    = $false
+# =============================================================================
+# 配置模块
+# =============================================================================
 
-# 检查端口占用
-function Test-Port {
-    param([int]$port)
+# 设置严格的错误处理
+$ErrorActionPreference = "Stop"
+
+# 配置常量
+$SCRIPT_DIR = $PSScriptRoot
+$LOG_FILE = Join-Path $SCRIPT_DIR "debug.log"
+
+# 服务端口配置
+$DEFAULT_BACKEND_PORT = 5020
+$DEFAULT_FRONTEND_PORT = 3000
+
+# 虚拟环境配置
+$VENV_NAME = "biorhythm_env"
+$VENV_PATH = Join-Path $SCRIPT_DIR $VENV_NAME
+
+# =============================================================================
+# 日志模块
+# =============================================================================
+
+function Write-Log {
+    param(
+        [string]$Level,
+        [string]$Message
+    )
+    
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "[$timestamp] [$Level] $Message"
+    
+    # 输出到控制台
+    switch ($Level) {
+        "INFO"    { Write-Host $logEntry -ForegroundColor Green }
+        "WARN"    { Write-Host $logEntry -ForegroundColor Yellow }
+        "ERROR"   { Write-Host $logEntry -ForegroundColor Red }
+        "SUCCESS" { Write-Host $logEntry -ForegroundColor Cyan }
+        default   { Write-Host $logEntry }
+    }
+    
+    # 写入日志文件
+    Add-Content -Path $LOG_FILE -Value $logEntry -Encoding UTF8
+}
+
+function Write-Info { param([string]$Message) { Write-Log "INFO" $Message } }
+function Write-Warn { param([string]$Message) { Write-Log "WARN" $Message } }
+function Write-Error { param([string]$Message) { Write-Log "ERROR" $Message } }
+function Write-Success { param([string]$Message) { Write-Log "SUCCESS" $Message } }
+
+# =============================================================================
+# 工具函数模块
+# =============================================================================
+
+function Test-PortAvailability {
+    param([int]$Port)
+    
     try {
-        return (Test-NetConnection -ComputerName localhost -Port $port -InformationLevel Quiet)
-    } catch { return $false }
+        # 使用 Test-NetConnection (PowerShell 4.0+)
+        if (Get-Command "Test-NetConnection" -ErrorAction SilentlyContinue) {
+            return -not (Test-NetConnection -ComputerName localhost -Port $Port -InformationLevel Quiet)
+        }
+        
+        # 备用方法：使用 .NET Socket
+        $tcpClient = New-Object System.Net.Sockets.TcpClient
+        $result = $tcpClient.BeginConnect("localhost", $Port, $null, $null)
+        $success = $result.AsyncWaitHandle.WaitOne(1000, $false)
+        $tcpClient.EndConnect($result)
+        
+        return -not $success
+    } catch {
+        # 连接失败说明端口可用
+        return $true
+    }
 }
 
 function Find-AvailablePort {
-    param([int]$port)
-    while (Test-Port $port) {
-        Write-Host "端口 $port 已被占用，切换到 $($port + 1)" -ForegroundColor Yellow
+    param([int]$DefaultPort)
+    
+    $port = $DefaultPort
+    while (-not (Test-PortAvailability -Port $port)) {
+        Write-Info "端口 $port 已被占用，尝试端口 $($port + 1)"
         $port++
     }
+    
     return $port
 }
 
-# 选择可用端口
-$BACKEND_PORT  = Find-AvailablePort -port $BACKEND_PORT
-Write-Host "后端将使用端口: $BACKEND_PORT" -ForegroundColor Cyan
-$FRONTEND_PORT = Find-AvailablePort -port $FRONTEND_PORT
-Write-Host "前端将使用端口: $FRONTEND_PORT" -ForegroundColor Cyan
-
-# 检查目录
-if (-not (Test-Path "backend"))  { Write-Host "错误: 找不到 backend 目录" -ForegroundColor Red; exit 1 }
-if (-not (Test-Path "frontend")) { Write-Host "错误: 找不到 frontend 目录" -ForegroundColor Red; exit 1 }
-
-# 检测 Conda
-if ($env:CONDA_PREFIX) {
-    Write-Host "检测到 Conda 环境: $env:CONDA_PREFIX" -ForegroundColor Cyan
-    $USE_CONDA = $true
+function Test-DirectoryExists {
+    param([string]$Path, [string]$Name)
+    
+    if (-not (Test-Path $Path)) {
+        Write-Error "$Name 目录不存在: $Path"
+    }
 }
 
-# 准备 Python 虚拟环境
-if ($USE_CONDA) {
-    Write-Host "使用 Conda 环境创建/激活虚拟环境..." -ForegroundColor Cyan
-    if (-not (conda env list | Select-String -Pattern $VENV_NAME)) {
-        conda create -y -n $VENV_NAME python=3.9
+function Test-PythonAvailable {
+    try {
+        $pythonVersion = & python --version 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            return $true
+        }
+    } catch {
+        return $false
     }
-    conda activate $VENV_NAME
-} else {
-    Write-Host "使用 venv 创建/激活虚拟环境..." -ForegroundColor Cyan
+    return $false
+}
+
+function Test-NodeAvailable {
+    try {
+        $nodeVersion = & node --version 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            return $true
+        }
+    } catch {
+        return $false
+    }
+    return $false
+}
+
+# =============================================================================
+# 虚拟环境管理模块
+# =============================================================================
+
+function Setup-VirtualEnvironment {
+    Write-Info "设置Python虚拟环境..."
+    
+    # 检查Python可用性
+    if (-not (Test-PythonAvailable)) {
+        Write-Error "未找到Python解释器，请确保Python已安装并添加到PATH"
+    }
+    
+    # 获取Python版本
+    try {
+        $pythonVersion = & python --version 2>&1
+        Write-Info "检测到Python版本: $pythonVersion"
+    } catch {
+        Write-Error "无法获取Python版本信息"
+    }
+    
+    # 创建或激活虚拟环境
     if (-not (Test-Path $VENV_PATH)) {
-        python -m venv $VENV_PATH
+        Write-Info "创建虚拟环境: $VENV_NAME"
+        & python -m venv $VENV_PATH
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "创建虚拟环境失败"
+        }
+    } else {
+        Write-Info "使用现有虚拟环境: $VENV_NAME"
     }
-    & "$VENV_PATH\Scripts\Activate.ps1"
-}
-
-# 启动后端服务
-Write-Host "启动后端服务..." -ForegroundColor Green
-Push-Location backend
-
-# 检查并创建必要的配置文件
-if (-not (Test-Path "config")) {
-    Write-Host "创建 config 目录..." -ForegroundColor Cyan
-    New-Item -ItemType Directory -Path "config" -Force
-}
-
-if (-not (Test-Path "config/app_config.json")) {
-    Write-Host "创建默认配置文件..." -ForegroundColor Cyan
-    $defaultConfig = @{
-        "app_name" = "Biorhythm Application"
-        "version" = "1.0.0"
-        "debug" = $true
-        "host" = "0.0.0.0"
-        "port" = $BACKEND_PORT
-        "cors_origins" = @("http://localhost:3000", "http://localhost:$FRONTEND_PORT")
+    
+    # 激活虚拟环境
+    $activateScript = Join-Path $VENV_PATH "Scripts\Activate.ps1"
+    if (Test-Path $activateScript) {
+        . $activateScript
+        Write-Success "虚拟环境已激活"
+    } else {
+        Write-Error "虚拟环境激活文件不存在: $activateScript"
     }
-    $defaultConfig | ConvertTo-Json -Depth 3 | Out-File -FilePath "config/app_config.json" -Encoding UTF8
 }
 
-# 安装依赖
-if ($USE_CONDA -or (Test-Path "$VENV_PATH\Scripts\Activate.ps1")) {
-    pip install --upgrade pip setuptools wheel
-    pip install fastapi uvicorn python-multipart
-    pip install numpy pandas
-} else {
-    pip install -r requirements.txt
+# =============================================================================
+# 后端服务模块
+# =============================================================================
+
+function Start-BackendService {
+    param([int]$Port)
+    
+    Write-Info "启动后端服务 (端口: $Port)..."
+    
+    # 验证目录
+    Test-DirectoryExists (Join-Path $SCRIPT_DIR "backend") "后端"
+    
+    # 切换到后端目录
+    Push-Location (Join-Path $SCRIPT_DIR "backend")
+    
+    try {
+        # 安装依赖
+        Write-Info "安装后端依赖..."
+        & pip install --upgrade pip
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "pip升级失败"
+        }
+        
+        & pip install -r requirements.txt
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "后端依赖安装失败"
+        }
+        
+        # 启动服务
+        Write-Info "启动FastAPI服务器..."
+        $backendProcess = Start-Process python -ArgumentList "app.py", "--port", $Port -PassThru -NoNewWindow
+        
+        # 等待服务启动
+        Start-Sleep -Seconds 3
+        
+        # 验证服务状态
+        if ($backendProcess.HasExited) {
+            Write-Error "后端服务启动失败，请检查 backend.log"
+        }
+        
+        return $backendProcess.Id
+        
+    } finally {
+        Pop-Location
+    }
 }
 
-# 后端以 Job 方式运行
-$backendJob = Start-Job -ScriptBlock {
-    param($dir, $port)
-    Set-Location $dir
-    $env:FLASK_RUN_PORT = $port
-    python app.py
-} -ArgumentList (Get-Location).Path, $BACKEND_PORT
+# =============================================================================
+# 前端服务模块
+# =============================================================================
 
-# 等待后端启动
-Start-Sleep -Seconds 3
-if ($backendJob.State -ne "Running") {
-    Write-Host "错误: 后端启动失败，请查看 backend/backend.log" -ForegroundColor Red
-    Receive-Job -Job $backendJob -Keep | Out-File -FilePath "../backend.log" -Append
-    Pop-Location; exit 1
-}
-Receive-Job -Job $backendJob -Keep | Out-File -FilePath "../backend.log" -Append
-Pop-Location
-
-# 启动前端服务
-Write-Host "启动前端服务..." -ForegroundColor Green
-Push-Location frontend
-
-npm install
-$frontendJob = Start-Job -ScriptBlock {
-    param($dir, $bport, $fport)
-    Set-Location $dir
-    $env:REACT_APP_BACKEND_PORT = $bport
-    $env:PORT = $fport
-    # 自动选择 Y 来使用其他端口
-    echo "y" | npm start
-} -ArgumentList (Get-Location).Path, $BACKEND_PORT, $FRONTEND_PORT
-
-# 等待前端启动
-Start-Sleep -Seconds 5
-if ($frontendJob.State -ne "Running") {
-    Write-Host "错误: 前端启动失败，请查看 frontend/frontend.log" -ForegroundColor Red
-    Receive-Job -Job $frontendJob -Keep | Out-File -FilePath "../frontend.log" -Append
-    Pop-Location; exit 1
-}
-Receive-Job -Job $frontendJob -Keep | Out-File -FilePath "../frontend.log" -Append
-Pop-Location
-
-# 输出访问信息
-Write-Host ""
-Write-Host "==================================================" -ForegroundColor Green
-Write-Host "服务已启动：" -ForegroundColor Green
-Write-Host "后端: http://localhost:$BACKEND_PORT" -ForegroundColor Cyan
-Write-Host "前端: http://localhost:$FRONTEND_PORT" -ForegroundColor Cyan
-Write-Host "Press Ctrl+C to stop all services" -ForegroundColor Yellow
-Write-Host "==================================================" -ForegroundColor Green
-
-# 清理函数
-function Cleanup {
-    Write-Host "" 
-    Write-Host "正在停止服务..." -ForegroundColor Yellow
-    if ($backendJob)  { Stop-Job   $backendJob; Remove-Job $backendJob }
-    if ($frontendJob) { Stop-Job   $frontendJob; Remove-Job $frontendJob }
-    Write-Host "所有服务已停止" -ForegroundColor Yellow
-    exit 0
+function Start-FrontendService {
+    param([int]$Port, [string]$BackendApi)
+    
+    Write-Info "启动前端服务 (端口: $Port)..."
+    
+    # 验证目录
+    Test-DirectoryExists (Join-Path $SCRIPT_DIR "frontend") "前端"
+    
+    # 检查Node.js可用性
+    if (-not (Test-NodeAvailable)) {
+        Write-Error "未找到Node.js，请确保Node.js已安装并添加到PATH"
+    }
+    
+    # 切换到前端目录
+    Push-Location (Join-Path $SCRIPT_DIR "frontend")
+    
+    try {
+        # 安装依赖
+        Write-Info "安装前端依赖..."
+        if (-not (Test-Path "node_modules")) {
+            & npm install
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "前端依赖安装失败"
+            }
+        }
+        
+        # 设置环境变量并启动服务
+        Write-Info "启动React开发服务器..."
+        $env:REACT_APP_BACKEND_API = $BackendApi
+        $env:PORT = $Port
+        
+        $frontendProcess = Start-Process npm -ArgumentList "start" -PassThru -NoNewWindow
+        
+        # 等待服务启动
+        Start-Sleep -Seconds 5
+        
+        # 验证服务状态
+        if ($frontendProcess.HasExited) {
+            Write-Error "前端服务启动失败，请检查 frontend.log"
+        }
+        
+        return $frontendProcess.Id
+        
+    } finally {
+        Pop-Location
+    }
 }
 
-# 注册 Ctrl+C 事件
-Register-EngineEvent PowerShell.Exiting -Action { Cleanup }
+# =============================================================================
+# 服务监控模块
+# =============================================================================
 
-# 保持脚本运行并监控状态
-while ($true) {
-    Start-Sleep -Seconds 5
+function Monitor-Services {
+    param([int]$BackendPid, [int]$FrontendPid)
+    
+    Write-Info "开始监控服务状态..."
+    
+    # 清理函数
+    function Cleanup-Services {
+        Write-Info "正在停止服务..."
+        
+        try {
+            # 停止后端服务
+            if (Get-Process -Id $BackendPid -ErrorAction SilentlyContinue) {
+                Stop-Process -Id $BackendPid -Force
+                Write-Info "后端服务已停止"
+            }
+            
+            # 停止前端服务
+            if (Get-Process -Id $FrontendPid -ErrorAction SilentlyContinue) {
+                Stop-Process -Id $FrontendPid -Force
+                Write-Info "前端服务已停止"
+            }
+            
+            Write-Success "所有服务已停止"
+        } catch {
+            Write-Warn "清理服务时发生错误: $($_.Exception.Message)"
+        }
+    }
+    
+    # 注册Ctrl+C事件
+    Register-EngineEvent -SourceIdentifier PowerShell.Exiting -Action {
+        Cleanup-Services
+    }
+    
+    # 监控循环
+    while ($true) {
+        try {
+            # 检查后端服务状态
+            if (-not (Get-Process -Id $BackendPid -ErrorAction SilentlyContinue)) {
+                Write-Error "后端服务异常停止"
+            }
+            
+            # 检查前端服务状态
+            if (-not (Get-Process -Id $FrontendPid -ErrorAction SilentlyContinue)) {
+                Write-Error "前端服务异常停止"
+            }
+            
+            Start-Sleep -Seconds 10
+            
+        } catch {
+            Write-Warn "监控服务时发生错误: $($_.Exception.Message)"
+            Start-Sleep -Seconds 5
+        }
+    }
+}
+
+# =============================================================================
+# 主函数
+# =============================================================================
+
+function Start-BiorhythmApp {
+    Write-Info "启动生物节律应用调试环境..."
+    
+    # 初始化日志文件
+    "=== 生物节律应用调试日志 ===" | Out-File -FilePath $LOG_FILE -Encoding UTF8
+    "启动时间: $(Get-Date)" | Out-File -FilePath $LOG_FILE -Encoding UTF8 -Append
+    
+    # 检查是否在项目根目录运行
+    if (-not (Test-Path (Join-Path $SCRIPT_DIR "backend\app.py")) -or 
+        -not (Test-Path (Join-Path $SCRIPT_DIR "frontend\package.json"))) {
+        Write-Error "请在项目根目录运行此脚本"
+    }
+    
+    # 查找可用端口
+    $backendPort = Find-AvailablePort -DefaultPort $DEFAULT_BACKEND_PORT
+    $frontendPort = Find-AvailablePort -DefaultPort $DEFAULT_FRONTEND_PORT
+    
+    Write-Info "后端服务端口: $backendPort"
+    Write-Info "前端服务端口: $frontendPort"
+    
+    # 设置虚拟环境
+    Setup-VirtualEnvironment
+    
+    # 启动后端服务
+    $backendPid = Start-BackendService -Port $backendPort
+    
+    # 配置后端API地址
+    $backendApi = "http://localhost:$backendPort"
+    
+    # 启动前端服务
+    $frontendPid = Start-FrontendService -Port $frontendPort -BackendApi $backendApi
+    
+    # 显示服务信息
+    Write-Host ""
+    Write-Host "==================================================" -ForegroundColor Cyan
+    Write-Host "🚀 生物节律应用调试环境已启动" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "📊 后端服务: http://localhost:$backendPort" -ForegroundColor Yellow
+    Write-Host "🌐 前端服务: http://localhost:$frontendPort" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "📝 日志文件: $LOG_FILE" -ForegroundColor Magenta
+    Write-Host "💡 按 Ctrl+C 停止所有服务" -ForegroundColor Red
+    Write-Host "==================================================" -ForegroundColor Cyan
+    Write-Host ""
+    
+    # 开始监控服务
+    Monitor-Services -BackendPid $backendPid -FrontendPid $frontendPid
+}
+
+# =============================================================================
+# 脚本入口点
+# =============================================================================
+
+try {
+    # 设置控制台编码为UTF-8
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+    
+    # 执行主函数
+    Start-BiorhythmApp
+} catch {
+    Write-Error "脚本执行失败: $($_.Exception.Message)"
+    exit 1
 }
