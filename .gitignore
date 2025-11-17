@@ -6,6 +6,7 @@
 *.log
 .claude
 .codebuddy
+.qoder
 biorhythm_env/*
 biorhythm_env/Lib/site-packages/*
 frontend/node_modules/*
@@ -21,3 +22,4 @@ backend/config/__pycache__/maya_config.cpython-312.pyc
 backend/.DS_Store
 frontend/.DS_Store
 *.DS_Store
+.qoder/OpenSpec/.gitignore
