@@ -255,6 +255,14 @@ docker-compose build --no-cache
 - WebSocket实时数据推送
 - 重要节点提醒功能
 
+### 5. API管理界面
+- Web-based API管理面板
+- API端点测试功能
+- 服务状态监控
+- 集成Swagger UI文档
+- 安全认证机制
+- 默认登录凭据: admin / admin123
+
 ## 🔧 配置说明
 
 ### 环境变量配置

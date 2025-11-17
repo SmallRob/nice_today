@@ -40,7 +40,10 @@ class UnifiedBackendService:
         self.app = FastAPI(
             title="统一后端API服务",
             description="整合生物节律、玛雅历法和穿搭建议的统一API服务",
-            version="1.0.0"
+            version="1.0.0",
+            docs_url="/api/docs",
+            redoc_url="/api/redoc",
+            openapi_url="/api/openapi.json"
         )
         self.setup_middleware()
         self.setup_routes()
@@ -191,6 +194,326 @@ class UnifiedBackendService:
                     "dress": True
                 }
             }
+            
+        # ==================== API管理接口 ====================
+        
+        @self.app.get("/api/management/endpoints")
+        async def get_api_endpoints():
+            """获取所有API端点信息"""
+            self.logger.info("获取API端点信息")
+            return {
+                "endpoints": [
+                    {
+                        "method": "GET",
+                        "path": "/health",
+                        "description": "健康检查接口",
+                        "category": "系统"
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/",
+                        "description": "API根路径",
+                        "category": "系统"
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/biorhythm/history",
+                        "description": "获取生物节律历史查询记录",
+                        "category": "生物节律"
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/biorhythm/today",
+                        "description": "获取今天的生物节律",
+                        "category": "生物节律",
+                        "parameters": [
+                            {"name": "birth_date", "required": True, "type": "string", "description": "出生日期，格式为YYYY-MM-DD"}
+                        ]
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/biorhythm/date",
+                        "description": "获取指定日期的生物节律",
+                        "category": "生物节律",
+                        "parameters": [
+                            {"name": "birth_date", "required": True, "type": "string", "description": "出生日期，格式为YYYY-MM-DD"},
+                            {"name": "date", "required": True, "type": "string", "description": "目标日期，格式为YYYY-MM-DD"}
+                        ]
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/biorhythm/range",
+                        "description": "获取一段时间内的生物节律",
+                        "category": "生物节律",
+                        "parameters": [
+                            {"name": "birth_date", "required": True, "type": "string", "description": "出生日期，格式为YYYY-MM-DD"},
+                            {"name": "days_before", "required": False, "type": "integer", "description": "当前日期之前的天数", "default": 10},
+                            {"name": "days_after", "required": False, "type": "integer", "description": "当前日期之后的天数", "default": 20}
+                        ]
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/maya/today",
+                        "description": "获取今日玛雅历法信息",
+                        "category": "玛雅历法"
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/maya/date",
+                        "description": "获取指定日期的玛雅历法信息",
+                        "category": "玛雅历法",
+                        "parameters": [
+                            {"name": "date", "required": True, "type": "string", "description": "目标日期，格式为YYYY-MM-DD"}
+                        ]
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/maya/range",
+                        "description": "获取一段时间内的玛雅历法信息",
+                        "category": "玛雅历法",
+                        "parameters": [
+                            {"name": "days_before", "required": False, "type": "integer", "description": "当前日期之前的天数", "default": 3},
+                            {"name": "days_after", "required": False, "type": "integer", "description": "当前日期之后的天数", "default": 3}
+                        ]
+                    },
+                    {
+                        "method": "POST",
+                        "path": "/api/maya/birth-info",
+                        "description": "获取玛雅出生图信息",
+                        "category": "玛雅历法",
+                        "parameters": [
+                            {"name": "birth_date", "required": True, "type": "string", "description": "出生日期，格式为YYYY-MM-DD"}
+                        ]
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/api/maya/history",
+                        "description": "获取玛雅历史记录",
+                        "category": "玛雅历法"
+                    },
+                    {
+                        "method": "POST",
+                        "path": "/api/maya/history",
+                        "description": "保存玛雅历史记录",
+                        "category": "玛雅历法"
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/dress/today",
+                        "description": "获取今日穿衣颜色和饮食建议",
+                        "category": "穿搭建议"
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/dress/date",
+                        "description": "获取指定日期的穿衣颜色和饮食建议",
+                        "category": "穿搭建议",
+                        "parameters": [
+                            {"name": "date", "required": True, "type": "string", "description": "目标日期，格式为YYYY-MM-DD"}
+                        ]
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/dress/range",
+                        "description": "获取一段时间内的穿衣颜色和饮食建议",
+                        "category": "穿搭建议",
+                        "parameters": [
+                            {"name": "days_before", "required": False, "type": "integer", "description": "当前日期之前的天数", "default": 1},
+                            {"name": "days_after", "required": False, "type": "integer", "description": "当前日期之后的天数", "default": 6}
+                        ]
+                    }
+                ]
+            }
+            
+        @self.app.get("/api/management/status")
+        async def get_service_status():
+            """获取服务状态信息"""
+            self.logger.info("获取服务状态信息")
+            try:
+                # 获取系统信息
+                import platform
+                import psutil
+                import time
+                
+                # 获取CPU和内存信息
+                cpu_percent = psutil.cpu_percent(interval=1)
+                memory = psutil.virtual_memory()
+                
+                # 获取磁盘信息
+                disk = psutil.disk_usage('/')
+                
+                # 获取启动时间
+                boot_time = psutil.boot_time()
+                uptime = time.time() - boot_time
+                
+                return {
+                    "status": "running",
+                    "timestamp": datetime.now().isoformat(),
+                    "system": {
+                        "platform": platform.system(),
+                        "platform_version": platform.version(),
+                        "architecture": platform.machine(),
+                        "hostname": platform.node()
+                    },
+                    "resources": {
+                        "cpu_percent": cpu_percent,
+                        "memory_total": memory.total,
+                        "memory_available": memory.available,
+                        "memory_percent": memory.percent,
+                        "disk_total": disk.total,
+                        "disk_used": disk.used,
+                        "disk_free": disk.free,
+                        "disk_percent": (disk.used / disk.total) * 100
+                    },
+                    "uptime": uptime,
+                    "services": {
+                        "biorhythm": True,
+                        "maya": True,
+                        "dress": True,
+                        "api": True
+                    }
+                }
+            except Exception as e:
+                self.logger.error(f"获取服务状态信息失败: {str(e)}")
+                return {
+                    "status": "error",
+                    "timestamp": datetime.now().isoformat(),
+                    "error": str(e)
+                }
+                
+        @self.app.post("/api/management/test")
+        async def test_api_endpoint(request: Request):
+            """测试API端点"""
+            try:
+                data = await request.json()
+                endpoint = data.get('endpoint', '')
+                method = data.get('method', 'GET')
+                params = data.get('params', {})
+                
+                self.logger.info(f"测试API端点 | 方法: {method} | 路径: {endpoint} | 参数: {params}")
+                
+                # 实际调用API端点
+                import httpx
+                
+                # 构造完整的URL
+                base_url = f"http://localhost:{os.getenv('PORT', '5000')}"
+                url = f"{base_url}{endpoint}"
+                
+                # 创建HTTP客户端
+                async with httpx.AsyncClient() as client:
+                    if method == 'GET':
+                        # 处理查询参数
+                        response = await client.get(url, params=params)
+                    elif method == 'POST':
+                        response = await client.post(url, json=params)
+                    else:
+                        return {
+                            "success": False,
+                            "error": f"不支持的HTTP方法: {method}",
+                            "timestamp": datetime.now().isoformat()
+                        }
+                
+                # 返回响应结果
+                return {
+                    "success": True,
+                    "endpoint": endpoint,
+                    "method": method,
+                    "request_params": params,
+                    "response": {
+                        "status_code": response.status_code,
+                        "headers": dict(response.headers),
+                        "data": response.json() if response.headers.get('content-type', '').startswith('application/json') else response.text
+                    },
+                    "timestamp": datetime.now().isoformat()
+                }
+            except Exception as e:
+                self.logger.error(f"API端点测试失败: {str(e)}")
+                return {
+                    "success": False,
+                    "error": str(e),
+                    "timestamp": datetime.now().isoformat()
+                }
+                
+        # ==================== API管理认证接口 ====================
+        
+        @self.app.post("/api/management/login")
+        async def api_management_login(request: Request):
+            """API管理界面登录"""
+            try:
+                # 尝试解析JSON数据
+                try:
+                    data = await request.json()
+                except Exception as json_error:
+                    self.logger.error(f"API管理登录JSON解析失败: {str(json_error)}")
+                    return {
+                        "success": False,
+                        "error": "请求数据格式错误"
+                    }
+                
+                username = data.get('username', '')
+                password = data.get('password', '')
+                
+                self.logger.info(f"API管理登录尝试 | 用户名: {username}")
+                
+                # 检查必需字段
+                if not username or not password:
+                    self.logger.warning(f"API管理登录缺少必需字段 | 用户名: {username}")
+                    return {
+                        "success": False,
+                        "error": "用户名和密码不能为空"
+                    }
+                
+                # 简单的认证逻辑（在实际应用中应该使用更安全的方式）
+                # 这里我们假设环境变量中设置了管理用户名和密码
+                import os
+                admin_username = os.getenv('ADMIN_USERNAME', 'admin')
+                admin_password = os.getenv('ADMIN_PASSWORD', 'admin123')
+                
+                self.logger.info(f"API管理登录验证 | 环境变量用户名: {admin_username}")
+                
+                if username == admin_username and password == admin_password:
+                    # 生成简单的token（实际应用中应使用JWT等更安全的方式）
+                    import secrets
+                    token = secrets.token_hex(16)
+                    
+                    # 在实际应用中，应该将token存储在数据库或缓存中
+                    # 这里我们只是演示
+                    self.logger.info(f"API管理登录成功 | 用户名: {username}")
+                    return {
+                        "success": True,
+                        "token": token,
+                        "message": "登录成功"
+                    }
+                else:
+                    self.logger.warning(f"API管理登录失败 | 用户名: {username} | 提供的用户名: {username}")
+                    return {
+                        "success": False,
+                        "error": "用户名或密码错误"
+                    }
+            except Exception as e:
+                self.logger.error(f"API管理登录失败: {str(e)}")
+                self.logger.error(f"错误详情: {traceback.format_exc()}")
+                return {
+                    "success": False,
+                    "error": "登录处理失败"
+                }
+                
+        @self.app.post("/api/management/logout")
+        async def api_management_logout(request: Request):
+            """API管理界面登出"""
+            try:
+                # 在实际应用中，应该从存储中删除token
+                # 这里我们只是演示
+                return {
+                    "success": True,
+                    "message": "登出成功"
+                }
+            except Exception as e:
+                self.logger.error(f"API管理登出失败: {str(e)}")
+                return {
+                    "success": False,
+                    "error": "登出处理失败"
+                }
             
         @self.app.get("/")
         async def root():
