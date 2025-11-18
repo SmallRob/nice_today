@@ -24,8 +24,8 @@ const ApiManagementLogin = ({ onLogin }) => {
     
     while (retryCount <= maxRetries) {
       try {
-        // 使用环境变量配置的API基础URL，如果没有配置则使用默认值
-        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+        // 使用环境变量配置的API基础URL，如果没有配置则使用默认值5001端口
+        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001';
         const loginUrl = `${apiBaseUrl}/api/management/login`;
         
         console.log(`发送登录请求到: ${loginUrl} (尝试 ${retryCount + 1}/${maxRetries + 1})`);
@@ -129,7 +129,7 @@ const ApiManagementLogin = ({ onLogin }) => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
             <div className="rounded-md bg-red-50 p-4">
-              <div className="text-sm text-red-700">
+              <div className="text-sm text-red-700 whitespace-pre-line">
                 {error}
               </div>
             </div>
