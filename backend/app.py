@@ -117,13 +117,30 @@ class UnifiedBackendService:
         
     def setup_middleware(self):
         """配置中间件"""
-        # CORS中间件
+        # CORS中间件 - 增强配置
         self.app.add_middleware(
             CORSMiddleware,
-            allow_origins=["*"],
+            allow_origins=[
+                "http://localhost:3000",
+                "http://localhost:3001", 
+                "http://127.0.0.1:3000",
+                "http://127.0.0.1:3001",
+                "*"  # 开发环境允许所有来源，生产环境应限制
+            ],
             allow_credentials=True,
-            allow_methods=["*"],
-            allow_headers=["*"],
+            allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+            allow_headers=[
+                "*",
+                "Authorization",
+                "Content-Type",
+                "Accept",
+                "Origin",
+                "X-Requested-With",
+                "Access-Control-Request-Method",
+                "Access-Control-Request-Headers"
+            ],
+            expose_headers=["*"],
+            max_age=86400  # 预检请求缓存时间（秒）
         )
         
         # 请求日志中间件
@@ -441,15 +458,22 @@ class UnifiedBackendService:
         async def api_management_login(request: Request):
             """API管理界面登录"""
             try:
+                # 记录请求开始
+                self.logger.info("API管理登录请求开始")
+                
                 # 尝试解析JSON数据
                 try:
                     data = await request.json()
+                    self.logger.info(f"API管理登录请求数据解析成功: {data}")
                 except Exception as json_error:
                     self.logger.error(f"API管理登录JSON解析失败: {str(json_error)}")
-                    return {
-                        "success": False,
-                        "error": "请求数据格式错误"
-                    }
+                    return JSONResponse(
+                        status_code=400,
+                        content={
+                            "success": False,
+                            "error": "请求数据格式错误，请检查JSON格式"
+                        }
+                    )
                 
                 username = data.get('username', '')
                 password = data.get('password', '')
@@ -459,10 +483,13 @@ class UnifiedBackendService:
                 # 检查必需字段
                 if not username or not password:
                     self.logger.warning(f"API管理登录缺少必需字段 | 用户名: {username}")
-                    return {
-                        "success": False,
-                        "error": "用户名和密码不能为空"
-                    }
+                    return JSONResponse(
+                        status_code=400,
+                        content={
+                            "success": False,
+                            "error": "用户名和密码不能为空"
+                        }
+                    )
                 
                 # 简单的认证逻辑（在实际应用中应该使用更安全的方式）
                 # 这里我们假设环境变量中设置了管理用户名和密码
@@ -480,24 +507,33 @@ class UnifiedBackendService:
                     # 在实际应用中，应该将token存储在数据库或缓存中
                     # 这里我们只是演示
                     self.logger.info(f"API管理登录成功 | 用户名: {username}")
-                    return {
-                        "success": True,
-                        "token": token,
-                        "message": "登录成功"
-                    }
+                    return JSONResponse(
+                        status_code=200,
+                        content={
+                            "success": True,
+                            "token": token,
+                            "message": "登录成功"
+                        }
+                    )
                 else:
-                    self.logger.warning(f"API管理登录失败 | 用户名: {username} | 提供的用户名: {username}")
-                    return {
-                        "success": False,
-                        "error": "用户名或密码错误"
-                    }
+                    self.logger.warning(f"API管理登录失败 | 用户名: {username}")
+                    return JSONResponse(
+                        status_code=401,
+                        content={
+                            "success": False,
+                            "error": "用户名或密码错误"
+                        }
+                    )
             except Exception as e:
                 self.logger.error(f"API管理登录失败: {str(e)}")
                 self.logger.error(f"错误详情: {traceback.format_exc()}")
-                return {
-                    "success": False,
-                    "error": "登录处理失败"
-                }
+                return JSONResponse(
+                    status_code=500,
+                    content={
+                        "success": False,
+                        "error": "服务器内部错误，请稍后重试"
+                    }
+                )
                 
         @self.app.post("/api/management/logout")
         async def api_management_logout(request: Request):

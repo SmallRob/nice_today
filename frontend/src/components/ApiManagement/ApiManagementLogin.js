@@ -18,39 +18,101 @@ const ApiManagementLogin = ({ onLogin }) => {
       return;
     }
 
-    try {
-      // 使用环境变量配置的API基础URL，如果没有配置则使用默认值
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001';
-      const loginUrl = `${apiBaseUrl}/api/management/login`;
-      
-      const response = await fetch(loginUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
+    // 重试机制
+    const maxRetries = 2;
+    let retryCount = 0;
+    
+    while (retryCount <= maxRetries) {
+      try {
+        // 使用环境变量配置的API基础URL，如果没有配置则使用默认值
+        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+        const loginUrl = `${apiBaseUrl}/api/management/login`;
+        
+        console.log(`发送登录请求到: ${loginUrl} (尝试 ${retryCount + 1}/${maxRetries + 1})`);
+        
+        const response = await fetch(loginUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ username, password }),
+          // 移除credentials以避免CORS预检问题
+          credentials: 'omit'
+        });
 
-      // 检查响应状态
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        console.log('收到响应:', response.status, response.statusText);
+
+        // 检查响应状态
+        if (!response.ok) {
+          let errorText;
+          try {
+            errorText = await response.text();
+          } catch {
+            errorText = '无法读取响应内容';
+          }
+          
+          console.error(`HTTP错误响应: ${response.status} - ${errorText}`);
+          
+          // 如果是服务器错误，重试
+          if (response.status >= 500 && retryCount < maxRetries) {
+            retryCount++;
+            console.log(`服务器错误，第${retryCount}次重试...`);
+            await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+            continue;
+          }
+          
+          // 尝试解析错误响应
+          let errorData;
+          try {
+            errorData = JSON.parse(errorText);
+          } catch {
+            errorData = { error: errorText };
+          }
+          
+          throw new Error(`HTTP ${response.status}: ${errorData.error || errorData.message || errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('响应数据:', data);
+
+        if (data.success) {
+          // 保存token到localStorage
+          localStorage.setItem('apiManagementToken', data.token);
+          onLogin(data.token);
+          break; // 成功，退出循环
+        } else {
+          setError(data.error || '登录失败');
+          break; // 业务逻辑错误，不重试
+        }
+        
+      } catch (err) {
+        console.error(`登录请求失败 (尝试 ${retryCount + 1}/${maxRetries + 1}):`, err);
+        
+        // 如果是网络错误且还有重试次数，则重试
+        if (err.message.includes('Failed to fetch') && retryCount < maxRetries) {
+          retryCount++;
+          console.log(`网络错误，第${retryCount}次重试...`);
+          await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+          continue;
+        }
+        
+        // 最终错误处理
+        if (err.message.includes('HTTP')) {
+          // HTTP错误
+          setError(err.message);
+        } else if (err.message.includes('Failed to fetch')) {
+          // 网络连接错误
+          setError('网络连接失败，请检查：\n1. 后端服务是否启动\n2. 网络连接是否正常\n3. 端口是否被占用');
+        } else {
+          // 其他错误
+          setError(`登录失败: ${err.message}`);
+        }
+        break;
       }
-
-      const data = await response.json();
-
-      if (data.success) {
-        // 保存token到localStorage
-        localStorage.setItem('apiManagementToken', data.token);
-        onLogin(data.token);
-      } else {
-        setError(data.error || '登录失败');
-      }
-    } catch (err) {
-      console.error('登录请求失败:', err);
-      setError('网络错误，请稍后重试');
-    } finally {
-      setLoading(false);
     }
+    
+    setLoading(false);
   };
 
   return (
