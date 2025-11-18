@@ -30,6 +30,7 @@ from services.maya_service import (
     get_today_maya_info, get_date_maya_info, get_maya_info_range,
     get_maya_birth_info, get_maya_history
 )
+from services.api_docs_service import api_docs_service
 from utils.date_utils import normalize_date_string
 
 class UnifiedBackendService:
@@ -546,6 +547,80 @@ class UnifiedBackendService:
                     }
                 }
             }
+            
+        # ==================== API文档接口 ====================
+        
+        @self.app.get("/api/docs")
+        async def get_api_docs():
+            """获取API文档列表"""
+            self.logger.info("获取API文档列表")
+            try:
+                docs = api_docs_service.get_all_docs()
+                return docs
+            except Exception as e:
+                self.logger.error(f"获取API文档列表失败: {str(e)}")
+                return {"docs": []}
+                
+        @self.app.get("/api/docs/{doc_id}")
+        async def get_api_doc(doc_id: str):
+            """获取特定API文档"""
+            self.logger.info(f"获取API文档 | ID: {doc_id}")
+            try:
+                doc = api_docs_service.get_doc_by_id(doc_id)
+                if doc:
+                    return doc
+                else:
+                    raise HTTPException(status_code=404, detail="文档未找到")
+            except HTTPException:
+                raise
+            except Exception as e:
+                self.logger.error(f"获取API文档失败: {str(e)}")
+                raise HTTPException(status_code=500, detail=str(e))
+                
+        @self.app.post("/api/docs")
+        async def create_api_doc(request: Request):
+            """创建新的API文档"""
+            self.logger.info("创建新的API文档")
+            try:
+                data = await request.json()
+                doc = api_docs_service.create_doc(data)
+                return doc
+            except Exception as e:
+                self.logger.error(f"创建API文档失败: {str(e)}")
+                raise HTTPException(status_code=500, detail=str(e))
+                
+        @self.app.put("/api/docs/{doc_id}")
+        async def update_api_doc(doc_id: str, request: Request):
+            """更新API文档"""
+            self.logger.info(f"更新API文档 | ID: {doc_id}")
+            try:
+                data = await request.json()
+                doc = api_docs_service.update_doc(doc_id, data)
+                if doc:
+                    return doc
+                else:
+                    raise HTTPException(status_code=404, detail="文档未找到")
+            except HTTPException:
+                raise
+            except Exception as e:
+                self.logger.error(f"更新API文档失败: {str(e)}")
+                raise HTTPException(status_code=500, detail=str(e))
+                
+        @self.app.delete("/api/docs/{doc_id}")
+        async def delete_api_doc(doc_id: str):
+            """删除API文档"""
+            self.logger.info(f"删除API文档 | ID: {doc_id}")
+            try:
+                result = api_docs_service.delete_doc(doc_id)
+                if result:
+                    return {"message": "文档删除成功"}
+                else:
+                    raise HTTPException(status_code=404, detail="文档未找到")
+            except HTTPException:
+                raise
+            except Exception as e:
+                self.logger.error(f"删除API文档失败: {str(e)}")
+                raise HTTPException(status_code=500, detail=str(e))
             
         # ==================== 生物节律相关接口 ====================
         

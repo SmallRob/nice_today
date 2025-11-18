@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import ApiManagementDashboard from './ApiManagementDashboard';
 import ServiceStatusDashboard from './ServiceStatusDashboard';
 import ApiManagementLogin from './ApiManagementLogin';
+import ApiDocsViewer from '../ApiDocsViewer/ApiDocsViewer';
+import ApiManagementPage from '../../pages/ApiManagementPage';
 
 const ApiManagementNavigation = () => {
   const [activeTab, setActiveTab] = useState('endpoints');
@@ -12,7 +14,8 @@ const ApiManagementNavigation = () => {
   const tabs = [
     { id: 'endpoints', label: 'API端点' },
     { id: 'status', label: '服务状态' },
-    { id: 'docs', label: 'API文档' }
+    { id: 'docs', label: 'API文档' },
+    { id: 'test', label: 'API测试' }
   ];
 
   // 检查是否已经登录
@@ -121,29 +124,8 @@ const ApiManagementNavigation = () => {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {activeTab === 'endpoints' && <ApiManagementDashboard />}
         {activeTab === 'status' && <ServiceStatusDashboard />}
-        {activeTab === 'docs' && (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">API文档</h2>
-            <p className="mb-4">API文档可通过以下链接访问:</p>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>
-                <a href="/api/docs" className="text-indigo-600 hover:text-indigo-800" target="_blank" rel="noopener noreferrer">
-                  Swagger UI文档
-                </a>
-              </li>
-              <li>
-                <a href="/api/redoc" className="text-indigo-600 hover:text-indigo-800" target="_blank" rel="noopener noreferrer">
-                  ReDoc文档
-                </a>
-              </li>
-              <li>
-                <a href="/api/openapi.json" className="text-indigo-600 hover:text-indigo-800" target="_blank" rel="noopener noreferrer">
-                  OpenAPI JSON
-                </a>
-              </li>
-            </ul>
-          </div>
-        )}
+        {activeTab === 'docs' && <ApiDocsViewer />}
+        {activeTab === 'test' && <ApiManagementPage />}
       </main>
     </div>
   );

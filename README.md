@@ -263,6 +263,13 @@ docker-compose build --no-cache
 - 安全认证机制
 - 默认登录凭据: admin / admin123
 
+### 6. API文档管理
+- API文档查看和版本管理
+- 集成OpenAPI规范支持
+- 在线API测试工具
+- 请求历史记录管理
+- 响应数据格式化展示
+
 ## 🔧 配置说明
 
 ### 环境变量配置
@@ -318,6 +325,7 @@ docker-compose build --no-cache
 - [MCP服务状态](docs/MCP_SERVICE_STATUS.md)
 - [MCP测试指南](docs/MCP_TEST_GUIDE.md)
 - [问题分析与解决方案](docs/问题分析与解决方案.md)
+- [API管理使用指南](docs/api-management-guide.md)
 
 ### 开发团队
 如有问题，请联系开发团队或提交Issue。
