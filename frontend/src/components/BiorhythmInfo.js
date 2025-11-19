@@ -192,9 +192,9 @@ const generateMonthlyHighLowData = (birthDate) => {
 const BiorhythmInfo = ({ data, title, birthDate }) => {
   if (!data) {
     return (
-      <div className="bg-white shadow rounded-lg p-6">
-        <div className="text-center py-8 text-gray-500">
-          <svg className="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+          <svg className="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
           没有可用的节律数据
@@ -264,10 +264,10 @@ const BiorhythmInfo = ({ data, title, birthDate }) => {
   const renderMonthlyHighLowTable = () => {
     if (!birthDate || monthlyHighLowData.length === 0) {
       return (
-        <div className="bg-white shadow rounded-lg p-6 border border-gray-100 mt-8">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">每月节律高低点</h3>
-          <div className="text-center py-8 text-gray-500">
-            <svg className="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 border border-gray-100 dark:border-gray-700 mt-8">
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">每月节律高低点</h3>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <svg className="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             请先输入出生日期以查看准确的节律高低点数据
@@ -277,48 +277,48 @@ const BiorhythmInfo = ({ data, title, birthDate }) => {
     }
 
     return (
-      <div className="bg-white shadow rounded-lg p-6 border border-gray-100 mt-8">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">每月节律高低点</h3>
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 border border-gray-100 dark:border-gray-700 mt-8">
+        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">每月节律高低点</h3>
+        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900 dark:bg-opacity-30 border border-blue-200 dark:border-blue-700 rounded-lg">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
             <span className="font-semibold">基于出生日期：</span>{birthDate} 
-            <span className="ml-2 text-blue-600">| 计算依据：体力(23天)、情绪(28天)、智力(33天)周期</span>
+            <span className="ml-2 text-blue-600 dark:text-blue-300">| 计算依据：体力(23天)、情绪(28天)、智力(33天)周期</span>
           </p>
         </div>
         <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
           <thead>
             <tr className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-              <th className="py-3 px-4 border-b border-r border-blue-400 text-left text-xs font-semibold uppercase tracking-wider">月份</th>
-              <th className="py-3 px-4 border-b border-r border-blue-400 text-left text-xs font-semibold uppercase tracking-wider">最高点日期</th>
-              <th className="py-3 px-4 border-b border-r border-blue-400 text-left text-xs font-semibold uppercase tracking-wider">最高点值</th>
-              <th className="py-3 px-4 border-b border-r border-blue-400 text-left text-xs font-semibold uppercase tracking-wider">体力</th>
-              <th className="py-3 px-4 border-b border-r border-blue-400 text-left text-xs font-semibold uppercase tracking-wider">情绪</th>
-              <th className="py-3 px-4 border-b border-r border-blue-400 text-left text-xs font-semibold uppercase tracking-wider">智力</th>
-              <th className="py-3 px-4 border-b border-r border-blue-400 text-left text-xs font-semibold uppercase tracking-wider">最低点日期</th>
-              <th className="py-3 px-4 border-b border-r border-blue-400 text-left text-xs font-semibold uppercase tracking-wider">最低点值</th>
-              <th className="py-3 px-4 border-b border-r border-blue-400 text-left text-xs font-semibold uppercase tracking-wider">体力</th>
-              <th className="py-3 px-4 border-b border-r border-blue-400 text-left text-xs font-semibold uppercase tracking-wider">情绪</th>
-              <th className="py-3 px-4 border-b border-blue-400 text-left text-xs font-semibold uppercase tracking-wider">智力</th>
+              <th className="py-3 px-4 border-b border-r border-blue-400 dark:border-blue-500 text-left text-xs font-semibold uppercase tracking-wider">月份</th>
+              <th className="py-3 px-4 border-b border-r border-blue-400 dark:border-blue-500 text-left text-xs font-semibold uppercase tracking-wider">最高点日期</th>
+              <th className="py-3 px-4 border-b border-r border-blue-400 dark:border-blue-500 text-left text-xs font-semibold uppercase tracking-wider">最高点值</th>
+              <th className="py-3 px-4 border-b border-r border-blue-400 dark:border-blue-500 text-left text-xs font-semibold uppercase tracking-wider">体力</th>
+              <th className="py-3 px-4 border-b border-r border-blue-400 dark:border-blue-500 text-left text-xs font-semibold uppercase tracking-wider">情绪</th>
+              <th className="py-3 px-4 border-b border-r border-blue-400 dark:border-blue-500 text-left text-xs font-semibold uppercase tracking-wider">智力</th>
+              <th className="py-3 px-4 border-b border-r border-blue-400 dark:border-blue-500 text-left text-xs font-semibold uppercase tracking-wider">最低点日期</th>
+              <th className="py-3 px-4 border-b border-r border-blue-400 dark:border-blue-500 text-left text-xs font-semibold uppercase tracking-wider">最低点值</th>
+              <th className="py-3 px-4 border-b border-r border-blue-400 dark:border-blue-500 text-left text-xs font-semibold uppercase tracking-wider">体力</th>
+              <th className="py-3 px-4 border-b border-r border-blue-400 dark:border-blue-500 text-left text-xs font-semibold uppercase tracking-wider">情绪</th>
+              <th className="py-3 px-4 border-b border-blue-400 dark:border-blue-500 text-left text-xs font-semibold uppercase tracking-wider">智力</th>
             </tr>
           </thead>
           <tbody>
             {monthlyHighLowData.map((item, index) => (
               <tr key={index} 
                   className={index % 2 === 0 
-                    ? 'bg-blue-50 hover:bg-blue-100 transition-colors duration-150' 
-                    : 'bg-white hover:bg-gray-50 transition-colors duration-150'}>
-                <td className="py-3 px-4 border-b border-r border-gray-200 text-sm font-medium text-gray-900">{item.month}</td>
-                <td className="py-3 px-4 border-b border-r border-gray-200 text-sm font-medium text-yellow-600">{item.highDate}</td>
-                <td className="py-3 px-4 border-b border-r border-gray-200 text-sm font-medium text-green-600">{item.highValue}</td>
-                <td className="py-3 px-4 border-b border-r border-gray-200 text-sm text-gray-900">{item.physicalHigh}</td>
-                <td className="py-3 px-4 border-b border-r border-gray-200 text-sm text-gray-900">{item.emotionalHigh}</td>
-                <td className="py-3 px-4 border-b border-r border-gray-200 text-sm text-gray-900">{item.intellectualHigh}</td>
-                <td className="py-3 px-4 border-b border-r border-gray-200 text-sm font-medium text-yellow-600">{item.lowDate}</td>
-                <td className="py-3 px-4 border-b border-r border-gray-200 text-sm font-medium text-red-600">{item.lowValue}</td>
-                <td className="py-3 px-4 border-b border-r border-gray-200 text-sm text-gray-900">{item.physicalLow}</td>
-                <td className="py-3 px-4 border-b border-r border-gray-200 text-sm text-gray-900">{item.emotionalLow}</td>
-                <td className="py-3 px-4 border-b border-gray-200 text-sm text-gray-900">{item.intellectualLow}</td>
+                    ? 'bg-blue-50 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-gray-600 transition-colors duration-150' 
+                    : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150'}>
+                <td className="py-3 px-4 border-b border-r border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-900 dark:text-white">{item.month}</td>
+                <td className="py-3 px-4 border-b border-r border-gray-200 dark:border-gray-700 text-sm font-medium text-yellow-600 dark:text-yellow-400">{item.highDate}</td>
+                <td className="py-3 px-4 border-b border-r border-gray-200 dark:border-gray-700 text-sm font-medium text-green-600 dark:text-green-400">{item.highValue}</td>
+                <td className="py-3 px-4 border-b border-r border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-300">{item.physicalHigh}</td>
+                <td className="py-3 px-4 border-b border-r border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-300">{item.emotionalHigh}</td>
+                <td className="py-3 px-4 border-b border-r border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-300">{item.intellectualHigh}</td>
+                <td className="py-3 px-4 border-b border-r border-gray-200 dark:border-gray-700 text-sm font-medium text-yellow-600 dark:text-yellow-400">{item.lowDate}</td>
+                <td className="py-3 px-4 border-b border-r border-gray-200 dark:border-gray-700 text-sm font-medium text-red-600 dark:text-red-400">{item.lowValue}</td>
+                <td className="py-3 px-4 border-b border-r border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-300">{item.physicalLow}</td>
+                <td className="py-3 px-4 border-b border-r border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-300">{item.emotionalLow}</td>
+                <td className="py-3 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-300">{item.intellectualLow}</td>
               </tr>
             ))}
           </tbody>
@@ -330,34 +330,34 @@ const BiorhythmInfo = ({ data, title, birthDate }) => {
 
   // 渲染24小时人体器官节律表格
   const render24HourOrganRhythm = () => (
-    <div className="bg-white shadow rounded-lg p-6 border border-gray-100 mt-8">
-      <h3 className="text-xl font-bold text-gray-800 mb-4">24小时人体器官节律</h3>
+    <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 border border-gray-100 dark:border-gray-700 mt-8">
+      <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">24小时人体器官节律</h3>
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden table-fixed">
+        <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden table-fixed">
           <thead>
             <tr className="bg-gradient-to-r from-green-500 to-green-600 text-white">
-              <th className="py-3 px-2 border-b border-r border-green-400 text-center text-xs font-semibold uppercase tracking-wider w-[10%]">时间段</th>
-              <th className="py-3 px-2 border-b border-r border-green-400 text-center text-xs font-semibold uppercase tracking-wider w-[8%]">部位</th>
-              <th className="py-3 px-2 border-b border-r border-green-400 text-center text-xs font-semibold uppercase tracking-wider w-[32%]">说明</th>
-              <th className="py-3 px-2 border-b border-r border-green-400 text-center text-xs font-semibold uppercase tracking-wider w-[25%]">建议活动</th>
-              <th className="py-3 px-2 border-b border-green-400 text-center text-xs font-semibold uppercase tracking-wider w-[25%]">健康提示</th>
+              <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[10%]">时间段</th>
+              <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[8%]">部位</th>
+              <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[32%]">说明</th>
+              <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[25%]">建议活动</th>
+              <th className="py-3 px-2 border-b border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[25%]">健康提示</th>
             </tr>
           </thead>
           <tbody>
             {organRhythmData.map((item, index) => (
               <tr key={index} 
                   className={index % 2 === 0 
-                    ? 'bg-green-50 hover:bg-green-100 transition-colors duration-150' 
-                    : 'bg-white hover:bg-gray-50 transition-colors duration-150'}>
-                <td className="py-2 px-2 border-b border-r border-gray-200 text-sm font-medium text-gray-900 text-center whitespace-nowrap">{item.timeRange}</td>
-                <td className="py-2 px-2 border-b border-r border-gray-200 text-sm font-bold text-blue-600 text-center whitespace-nowrap">{item.organ}</td>
-                <td className="py-2 px-2 border-b border-r border-gray-200 text-sm text-gray-800 truncate" title={item.description}>
+                    ? 'bg-green-50 dark:bg-gray-700 hover:bg-green-100 dark:hover:bg-gray-600 transition-colors duration-150' 
+                    : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150'}>
+                <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-900 dark:text-white text-center whitespace-nowrap">{item.timeRange}</td>
+                <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm font-bold text-blue-600 dark:text-blue-400 text-center whitespace-nowrap">{item.organ}</td>
+                <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-300 truncate" title={item.description}>
                   <div className="max-h-12 overflow-hidden">{item.description}</div>
                 </td>
-                <td className="py-2 px-2 border-b border-r border-gray-200 text-sm text-gray-800 truncate" title={item.activities}>
+                <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-300 truncate" title={item.activities}>
                   <div className="max-h-12 overflow-hidden">{item.activities}</div>
                 </td>
-                <td className="py-2 px-2 border-b border-gray-200 text-sm text-gray-800 truncate" title={item.tips}>
+                <td className="py-2 px-2 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-300 truncate" title={item.tips}>
                   <div className="max-h-12 overflow-hidden">{item.tips}</div>
                 </td>
               </tr>
@@ -368,16 +368,16 @@ const BiorhythmInfo = ({ data, title, birthDate }) => {
       
       {/* 添加移动端优化视图 */}
       <div className="md:hidden mt-6">
-        <h4 className="text-lg font-semibold text-gray-700 mb-3">器官节律详情</h4>
+        <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">器官节律详情</h4>
         {organRhythmData.map((item, index) => (
-          <div key={index} className="mb-4 p-3 bg-white rounded-lg shadow border border-gray-200">
+          <div key={index} className="mb-4 p-3 bg-white dark:bg-gray-700 rounded-lg shadow border border-gray-200 dark:border-gray-600">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded">{item.timeRange}</span>
-              <span className="text-sm font-bold bg-blue-100 text-blue-800 px-2 py-1 rounded">{item.organ}</span>
+              <span className="text-sm font-bold bg-green-100 dark:bg-green-900 dark:bg-opacity-30 text-green-800 dark:text-green-300 px-2 py-1 rounded">{item.timeRange}</span>
+              <span className="text-sm font-bold bg-blue-100 dark:bg-blue-900 dark:bg-opacity-30 text-blue-800 dark:text-blue-300 px-2 py-1 rounded">{item.organ}</span>
             </div>
-            <p className="text-sm text-gray-700 mb-2"><span className="font-medium">说明：</span>{item.description}</p>
-            <p className="text-sm text-gray-700 mb-2"><span className="font-medium">建议活动：</span>{item.activities}</p>
-            <p className="text-sm text-gray-700"><span className="font-medium">健康提示：</span>{item.tips}</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-2"><span className="font-medium">说明：</span>{item.description}</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-2"><span className="font-medium">建议活动：</span>{item.activities}</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300"><span className="font-medium">健康提示：</span>{item.tips}</p>
           </div>
         ))}
       </div>
@@ -388,7 +388,7 @@ const BiorhythmInfo = ({ data, title, birthDate }) => {
   const renderRhythmCards = (rhythmData) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
       {rhythmData.map((rhythm) => (
-        <div key={rhythm.key} className="bg-white shadow rounded-lg p-4 border border-gray-100 hover:shadow-md transition-shadow duration-200">
+        <div key={rhythm.key} className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow duration-200">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center">
               <div className={`w-6 h-6 ${
@@ -409,17 +409,17 @@ const BiorhythmInfo = ({ data, title, birthDate }) => {
                   )}
                 </svg>
               </div>
-              <h3 className="text-base font-semibold text-gray-800">{rhythm.name}</h3>
+              <h3 className="text-base font-semibold text-gray-800 dark:text-white">{rhythm.name}</h3>
             </div>
             <div className="flex items-center">
-              <span className="text-lg font-bold text-gray-800 mr-2">{rhythm.value}</span>
+              <span className="text-lg font-bold text-gray-800 dark:text-white mr-2">{rhythm.value}</span>
               <div className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium border ${getStatusColorClass(rhythm.value)}`}>
                 {getRhythmStatus(rhythm.value)}
               </div>
             </div>
           </div>
           
-          <div className="relative h-5 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+          <div className="relative h-5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
             <div 
               className={`absolute top-0 left-1/2 h-full ${getRhythmColorClass(rhythm.key)} shadow-sm`} 
               style={{ 
@@ -427,19 +427,19 @@ const BiorhythmInfo = ({ data, title, birthDate }) => {
                 transform: rhythm.value >= 0 ? 'translateX(0)' : 'translateX(-100%)'
               }}
             ></div>
-            <div className="absolute top-0 left-1/2 w-0.5 h-full bg-gray-400"></div>
+            <div className="absolute top-0 left-1/2 w-0.5 h-full bg-gray-400 dark:bg-gray-500"></div>
           </div>
           
-          <div className="mt-2 flex justify-between text-xs text-gray-500">
+          <div className="mt-2 flex justify-between text-xs text-gray-500 dark:text-gray-400">
             <span className="font-medium">-100</span>
             <span className="font-medium">0</span>
             <span className="font-medium">+100</span>
           </div>
           
-          <div className="mt-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 shadow-sm">
+          <div className="mt-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
             <div className="flex items-center">
               <div className={`w-2 h-2 rounded-full mr-2 ${rhythm.value > 0 ? 'bg-green-500' : rhythm.value < 0 ? 'bg-red-500' : 'bg-gray-500'}`}></div>
-              <p className="text-xs text-gray-700 font-medium">
+              <p className="text-xs text-gray-700 dark:text-gray-300 font-medium">
                 {getPredictionTip(rhythm.key, rhythm.value, title)}
               </p>
             </div>

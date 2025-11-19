@@ -43,7 +43,7 @@ const getRhythmStatus = (value) => {
 
 const BiorhythmChart = ({ data }) => {
   if (!data || !data.dates || !data.physical || !data.emotional || !data.intellectual) {
-    return <div className="text-center py-4">没有可用的图表数据</div>;
+    return <div className="text-center py-4 text-gray-900 dark:text-white">没有可用的图表数据</div>;
   }
 
   // 找到今天的索引
@@ -103,6 +103,7 @@ const BiorhythmChart = ({ data }) => {
           font: {
             size: 14,
           },
+          color: '#1f2937', // Default text color
         },
       },
       tooltip: {
@@ -150,12 +151,16 @@ const BiorhythmChart = ({ data }) => {
         max: 100,
         ticks: {
           stepSize: 25,
+          color: '#6b7280', // Default tick color
         },
         grid: {
           color: 'rgba(0, 0, 0, 0.1)',
         },
       },
       x: {
+        ticks: {
+          color: '#6b7280', // Default tick color
+        },
         grid: {
           color: 'rgba(0, 0, 0, 0.1)',
         },
@@ -176,103 +181,103 @@ const BiorhythmChart = ({ data }) => {
     
     // 根据综合累积值确定状态
     const getTotalScoreStatus = (score) => {
-      if (score >= 200) return { text: '极佳', color: 'text-green-600', bg: 'bg-green-100' };
-      if (score >= 100) return { text: '很好', color: 'text-green-500', bg: 'bg-green-50' };
-      if (score >= 50) return { text: '良好', color: 'text-blue-600', bg: 'bg-blue-50' };
-      if (score >= 0) return { text: '一般偏好', color: 'text-blue-500', bg: 'bg-blue-50' };
-      if (score >= -50) return { text: '一般偏低', color: 'text-yellow-600', bg: 'bg-yellow-50' };
-      if (score >= -100) return { text: '较差', color: 'text-orange-600', bg: 'bg-orange-50' };
-      if (score >= -200) return { text: '很差', color: 'text-red-500', bg: 'bg-red-50' };
-      return { text: '极差', color: 'text-red-600', bg: 'bg-red-100' };
+      if (score >= 200) return { text: '极佳', color: 'text-green-600 dark:text-green-400', bg: 'bg-green-100 dark:bg-green-900 dark:bg-opacity-30' };
+      if (score >= 100) return { text: '很好', color: 'text-green-500 dark:text-green-300', bg: 'bg-green-50 dark:bg-green-900 dark:bg-opacity-20' };
+      if (score >= 50) return { text: '良好', color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20' };
+      if (score >= 0) return { text: '一般偏好', color: 'text-blue-500 dark:text-blue-300', bg: 'bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20' };
+      if (score >= -50) return { text: '一般偏低', color: 'text-yellow-600 dark:text-yellow-400', bg: 'bg-yellow-50 dark:bg-yellow-900 dark:bg-opacity-20' };
+      if (score >= -100) return { text: '较差', color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-900 dark:bg-opacity-20' };
+      if (score >= -200) return { text: '很差', color: 'text-red-500 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-900 dark:bg-opacity-20' };
+      return { text: '极差', color: 'text-red-600 dark:text-red-300', bg: 'bg-red-100 dark:bg-red-900 dark:bg-opacity-30' };
     };
     
     const totalStatus = getTotalScoreStatus(totalScore);
     
     return (
-      <div className="relative overflow-hidden bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 mb-6 shadow-lg">
+      <div className="relative overflow-hidden bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 border border-blue-200 dark:border-gray-700 rounded-xl p-6 mb-6 shadow-lg">
         {/* 装饰性背景元素 */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full opacity-50 transform translate-x-8 -translate-y-8"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900 dark:to-indigo-900 rounded-full opacity-50 transform translate-x-8 -translate-y-8"></div>
         
         <div className="relative z-10">
           <div className="flex items-center mb-4">
             <div className="flex-shrink-0">
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isExcellent ? 'bg-green-100' : isPoor ? 'bg-red-100' : 'bg-blue-100'}`}>
-                <svg className={`w-6 h-6 ${isExcellent ? 'text-green-600' : isPoor ? 'text-red-600' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isExcellent ? 'bg-green-100 dark:bg-green-900 dark:bg-opacity-30' : isPoor ? 'bg-red-100 dark:bg-red-900 dark:bg-opacity-30' : 'bg-blue-100 dark:bg-blue-900 dark:bg-opacity-30'}`}>
+                <svg className={`w-6 h-6 ${isExcellent ? 'text-green-600 dark:text-green-400' : isPoor ? 'text-red-600 dark:text-red-400' : 'text-blue-600 dark:text-blue-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
             </div>
             <div className="ml-4">
-              <h3 className="text-xl font-bold text-gray-900">今日节律状态</h3>
-              <p className="text-sm text-gray-600">基于您的生物节律分析</p>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">今日节律状态</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">基于您的生物节律分析</p>
             </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-blue-500 hover:shadow-md transition-shadow duration-200">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border-l-4 border-blue-500 dark:border-blue-400 hover:shadow-md transition-shadow duration-200">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center">
                   <div className="w-4 h-4 rounded-full bg-blue-500 mr-2"></div>
-                  <span className="font-semibold text-gray-900">体力节律</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">体力节律</span>
                 </div>
-                <span className={`text-lg font-bold ${todayPhysical > 0 ? 'text-green-600' : todayPhysical < 0 ? 'text-red-600' : 'text-gray-600'}`}>
+                <span className={`text-lg font-bold ${todayPhysical > 0 ? 'text-green-600 dark:text-green-400' : todayPhysical < 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
                   {todayPhysical}
                 </span>
               </div>
               <div className={`text-sm font-medium px-2 py-1 rounded-full inline-block ${
-                todayPhysical > 0 ? 'bg-green-100 text-green-800' : 
-                todayPhysical < 0 ? 'bg-red-100 text-red-800' : 
-                'bg-gray-100 text-gray-800'
+                todayPhysical > 0 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:bg-opacity-30 dark:text-green-400' : 
+                todayPhysical < 0 ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:bg-opacity-30 dark:text-red-400' : 
+                'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
               }`}>
                 {getRhythmStatus(todayPhysical)}
               </div>
             </div>
             
-            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-red-500 hover:shadow-md transition-shadow duration-200">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border-l-4 border-red-500 dark:border-red-400 hover:shadow-md transition-shadow duration-200">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center">
                   <div className="w-4 h-4 rounded-full bg-red-500 mr-2"></div>
-                  <span className="font-semibold text-gray-900">情绪节律</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">情绪节律</span>
                 </div>
-                <span className={`text-lg font-bold ${todayEmotional > 0 ? 'text-green-600' : todayEmotional < 0 ? 'text-red-600' : 'text-gray-600'}`}>
+                <span className={`text-lg font-bold ${todayEmotional > 0 ? 'text-green-600 dark:text-green-400' : todayEmotional < 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
                   {todayEmotional}
                 </span>
               </div>
               <div className={`text-sm font-medium px-2 py-1 rounded-full inline-block ${
-                todayEmotional > 0 ? 'bg-green-100 text-green-800' : 
-                todayEmotional < 0 ? 'bg-red-100 text-red-800' : 
-                'bg-gray-100 text-gray-800'
+                todayEmotional > 0 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:bg-opacity-30 dark:text-green-400' : 
+                todayEmotional < 0 ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:bg-opacity-30 dark:text-red-400' : 
+                'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
               }`}>
                 {getRhythmStatus(todayEmotional)}
               </div>
             </div>
             
-            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-green-500 hover:shadow-md transition-shadow duration-200">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border-l-4 border-green-500 dark:border-green-400 hover:shadow-md transition-shadow duration-200">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center">
                   <div className="w-4 h-4 rounded-full bg-green-500 mr-2"></div>
-                  <span className="font-semibold text-gray-900">智力节律</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">智力节律</span>
                 </div>
-                <span className={`text-lg font-bold ${todayIntellectual > 0 ? 'text-green-600' : todayIntellectual < 0 ? 'text-red-600' : 'text-gray-600'}`}>
+                <span className={`text-lg font-bold ${todayIntellectual > 0 ? 'text-green-600 dark:text-green-400' : todayIntellectual < 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
                   {todayIntellectual}
                 </span>
               </div>
               <div className={`text-sm font-medium px-2 py-1 rounded-full inline-block ${
-                todayIntellectual > 0 ? 'bg-green-100 text-green-800' : 
-                todayIntellectual < 0 ? 'bg-red-100 text-red-800' : 
-                'bg-gray-100 text-gray-800'
+                todayIntellectual > 0 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:bg-opacity-30 dark:text-green-400' : 
+                todayIntellectual < 0 ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:bg-opacity-30 dark:text-red-400' : 
+                'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
               }`}>
                 {getRhythmStatus(todayIntellectual)}
               </div>
             </div>
             
-            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-purple-500 hover:shadow-md transition-shadow duration-200">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border-l-4 border-purple-500 dark:border-purple-400 hover:shadow-md transition-shadow duration-200">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center">
                   <div className="w-4 h-4 rounded-full bg-purple-500 mr-2"></div>
-                  <span className="font-semibold text-gray-900">综合累积值</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">综合累积值</span>
                 </div>
-                <span className={`text-lg font-bold ${totalScore > 0 ? 'text-green-600' : totalScore < 0 ? 'text-red-600' : 'text-gray-600'}`}>
+                <span className={`text-lg font-bold ${totalScore > 0 ? 'text-green-600 dark:text-green-400' : totalScore < 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
                   {totalScore}
                 </span>
               </div>
@@ -283,7 +288,7 @@ const BiorhythmChart = ({ data }) => {
           </div>
           
           {/* 今日建议 */}
-          <div className={`rounded-lg p-4 border-l-4 ${totalStatus.bg} border-${totalStatus.color.split('-')[1]}-500`}>
+          <div className={`rounded-lg p-4 border-l-4 ${totalStatus.bg} border-${totalStatus.color.split('-')[1]}-500 dark:border-${totalStatus.color.split('-')[1]}-400`}>
             <div className="flex items-start">
               <div className="flex-shrink-0 mt-1">
                 <svg className={`w-5 h-5 ${totalStatus.color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -291,55 +296,55 @@ const BiorhythmChart = ({ data }) => {
                 </svg>
               </div>
               <div className="ml-3">
-                <h4 className="text-sm font-semibold text-gray-900 mb-1">今日综合建议</h4>
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">今日综合建议</h4>
                 {totalScore >= 200 ? (
-                  <p className="text-sm text-green-700 font-medium">
+                  <p className="text-sm text-green-700 dark:text-green-300 font-medium">
                     🌟 今天是您的超级黄金日！综合累积值极高，体力、情绪和智力都处于巅峰状态。适合进行重要决策、创造性工作和挑战性活动。充分利用这一天，您可能会有突破性的表现！
                   </p>
                 ) : totalScore >= 100 ? (
-                  <p className="text-sm text-green-600 font-medium">
+                  <p className="text-sm text-green-600 dark:text-green-400 font-medium">
                     ✨ 今天是您的高能日！综合状态非常好，适合处理重要事务、社交活动和创意工作。您的表现将超出平时水平，是实现目标的理想时机。
                   </p>
                 ) : totalScore >= 50 ? (
-                  <p className="text-sm text-blue-600 font-medium">
+                  <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">
                     👍 今天状态良好，各项指标处于积极水平。适合正常工作和学习，也可以适当安排一些有挑战性的任务。保持积极心态，将是充实的一天。
                   </p>
                 ) : totalScore >= 0 ? (
-                  <p className="text-sm text-blue-500 font-medium">
+                  <p className="text-sm text-blue-500 dark:text-blue-300 font-medium">
                     😊 今天状态平稳偏好，可以正常开展各项活动。建议合理安排工作和休息，避免过度疲劳。关注自己的情绪变化，保持平和心态。
                   </p>
                 ) : totalScore >= -50 ? (
-                  <p className="text-sm text-yellow-600 font-medium">
+                  <p className="text-sm text-yellow-600 dark:text-yellow-400 font-medium">
                     ⚠️ 今天状态一般偏低，建议适当减少工作强度，增加休息时间。避免做重要决策，保持心情平静，注意身体状况。
                   </p>
                 ) : totalScore >= -100 ? (
-                  <p className="text-sm text-orange-600 font-medium">
+                  <p className="text-sm text-orange-600 dark:text-orange-400 font-medium">
                     ⚠️ 今天综合状态较差，建议以休息和恢复为主。推迟重要决策和高强度活动，保持良好作息，避免情绪波动。
                   </p>
                 ) : totalScore >= -200 ? (
-                  <p className="text-sm text-red-500 font-medium">
+                  <p className="text-sm text-red-500 dark:text-red-400 font-medium">
                     ⚠️ 今天综合状态很差，强烈建议减少活动量，避免压力和冲突。重视休息和放松，可以进行冥想或轻度伸展活动帮助恢复。
                   </p>
                 ) : (
-                  <p className="text-sm text-red-700 font-medium">
+                  <p className="text-sm text-red-700 dark:text-red-300 font-medium">
                     ⚠️ 今天是低谷期，综合累积值极低。请务必注意休息，避免任何重要决策和高强度活动。保持心情平静，专注于自我照顾和恢复。
                   </p>
                 )}
                 
-                <div className="mt-3 text-sm text-gray-700 space-y-1">
-                  <p className={todayPhysical > 0 ? "text-green-700" : "text-red-700"}>
+                <div className="mt-3 text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                  <p className={todayPhysical > 0 ? "text-green-700 dark:text-green-300" : "text-red-700 dark:text-red-300"}>
                     💪 {todayPhysical > 50 ? "体力充沛，适合高强度运动和体力活动。" : 
                        todayPhysical > 0 ? "体力状态良好，适合适度运动。" : 
                        todayPhysical > -50 ? "体力状态一般，注意适当休息。" : 
                        "体力状态较差，建议多休息，避免剧烈运动。"}
                   </p>
-                  <p className={todayEmotional > 0 ? "text-green-700" : "text-red-700"}>
+                  <p className={todayEmotional > 0 ? "text-green-700 dark:text-green-300" : "text-red-700 dark:text-red-300"}>
                     😊 {todayEmotional > 50 ? "情绪非常积极，人际关系和沟通将特别顺利。" : 
                        todayEmotional > 0 ? "情绪稳定积极，适合社交活动。" : 
                        todayEmotional > -50 ? "情绪略有波动，保持平静心态。" : 
                        "情绪可能较低落，避免压力和冲突，关注自我情绪调节。"}
                   </p>
-                  <p className={todayIntellectual > 0 ? "text-green-700" : "text-red-700"}>
+                  <p className={todayIntellectual > 0 ? "text-green-700 dark:text-green-300" : "text-red-700 dark:text-red-300"}>
                     🧠 {todayIntellectual > 50 ? "思维特别敏捷，创造力和解决问题能力处于高峰。" : 
                        todayIntellectual > 0 ? "思维清晰，适合学习和创造性工作。" : 
                        todayIntellectual > -50 ? "思维效率一般，适合处理常规任务。" : 

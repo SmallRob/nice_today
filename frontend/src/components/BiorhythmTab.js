@@ -145,11 +145,11 @@ const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
 
   return (
     <>
-      <div className="bg-white shadow rounded-lg p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">输入您的出生日期</h2>
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
+        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">输入您的出生日期</h2>
         {isDefaultDate && (
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
-            <p className="text-blue-700">
+          <div className="bg-blue-50 dark:bg-blue-900 dark:bg-opacity-30 border-l-4 border-blue-500 dark:border-blue-400 p-4 mb-4">
+            <p className="text-blue-700 dark:text-blue-300">
               当前显示的是默认出生日期（1991年1月1日）的生物节律数据。请选择您的实际出生日期以获取个性化分析。
             </p>
           </div>
@@ -161,7 +161,7 @@ const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
               onChange={handleDateChange}
               dateFormat="yyyy-MM-dd"
               placeholderText="选择出生日期"
-              className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               showYearDropdown
               scrollableYearDropdown
               yearDropdownItemNumber={100}
@@ -189,7 +189,7 @@ const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
             <button
               onClick={() => loadBiorhythmData()}
               disabled={loading || !birthDate || !apiConnected}
-              className={`px-4 py-2 rounded-md text-white ${loading || !birthDate || !apiConnected ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
+              className={`px-4 py-2 rounded-md text-white ${loading || !birthDate || !apiConnected ? 'bg-gray-400 dark:bg-gray-600' : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600'}`}
             >
               {loading ? '加载中...' : '分析节律'}
             </button>
@@ -198,19 +198,19 @@ const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
               <button
                 onClick={() => setShowHistory(!showHistory)}
                 disabled={loading || historyDates.length === 0}
-                className={`px-4 py-2 rounded-md text-white ${loading || historyDates.length === 0 ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'}`}
+                className={`px-4 py-2 rounded-md text-white ${loading || historyDates.length === 0 ? 'bg-gray-400 dark:bg-gray-600' : 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600'}`}
               >
                 历史记录
               </button>
               
               {showHistory && historyDates.length > 0 && (
-                <div className="absolute z-50 mt-2 w-48 bg-white rounded-md shadow-lg">
+                <div className="absolute z-50 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg">
                   <div className="py-1">
                     {historyDates.map((date, index) => (
                       <button
                         key={index}
                         onClick={() => loadBiorhythmData(date)}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         {formatDate(date)}
                       </button>
@@ -221,19 +221,19 @@ const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
             </div>
           </div>
         </div>
-        {error && <p className="text-red-500 mt-2">{error}</p>}
+        {error && <p className="text-red-500 dark:text-red-400 mt-2">{error}</p>}
       </div>
       
       {rhythmData && todayData && (
         <>
-          <div className="bg-white shadow rounded-lg p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">您的生物节律图表</h2>
+          <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">您的生物节律图表</h2>
             <BiorhythmChart data={rhythmData} />
           </div>
           
           <div className="space-y-6">
-            <div className="bg-white shadow rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">生物节律科学依据</h2>
+            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">生物节律科学依据</h2>
               <BiorhythmInfo 
                 data={todayData} 
                 title="今日" 
@@ -241,8 +241,8 @@ const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
               />
             </div>
             
-            <div className="bg-white shadow rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">7天后节律</h2>
+            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">7天后节律</h2>
               <BiorhythmInfo 
                 data={futureData} 
                 title="7天后" 

@@ -583,15 +583,15 @@ const MayaCalendar = ({ apiBaseUrl }) => {
   };
 
   if (loading && !selectedMayaInfo) {
-    return <div className="text-center py-8">加载中...</div>;
+    return <div className="text-center py-8 text-gray-900 dark:text-white">加载中...</div>;
   }
 
   if (error && !selectedMayaInfo) {
     return (
-      <div className="bg-white shadow rounded-lg p-6">
-        <div className="text-center py-8 text-red-500">{error}</div>
-        <div className="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-400">
-          <p className="text-yellow-700">
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <div className="text-center py-8 text-red-500 dark:text-red-400">{error}</div>
+        <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900 dark:bg-opacity-20 border-l-4 border-yellow-400 dark:border-yellow-600">
+          <p className="text-yellow-700 dark:text-yellow-300">
             提示：请确保后端服务已启动，并且已实现玛雅日历API。
           </p>
         </div>
@@ -600,7 +600,7 @@ const MayaCalendar = ({ apiBaseUrl }) => {
   }
 
   if (!selectedMayaInfo) {
-    return <div className="text-center py-8">暂无玛雅日历信息</div>;
+    return <div className="text-center py-8 text-gray-900 dark:text-white">暂无玛雅日历信息</div>;
   }
 
   // 确保lucky_items存在，如果不存在则提供默认值
@@ -622,9 +622,9 @@ const MayaCalendar = ({ apiBaseUrl }) => {
   };
 
 return (
-    <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
+    <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 border border-gray-100 dark:border-gray-700">
       {/* 玛雅日历知识卡片 */}
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl shadow-lg p-6 mb-6 text-white border border-purple-500">
+      <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl shadow-lg p-6 mb-6 text-white border border-purple-500 dark:border-purple-400">
         <div className="flex items-center mb-3">
           <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3 border border-white border-opacity-30">
             <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -640,65 +640,65 @@ return (
       </div>
       
       {/* 玛雅日历基础知识卡片 */}
-      <div className="bg-white shadow-lg rounded-xl p-6 mb-6 border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4 flex items-center">
+      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 mb-6 border border-gray-200 dark:border-gray-700">
+        <h3 className="text-lg font-semibold mb-4 flex items-center text-gray-900 dark:text-white">
           <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
           玛雅日历基础知识
         </h3>
         <div className="flex overflow-x-auto w-full">
           <div className="flex-1 min-w-0 flex space-x-1">
-            <div className="flex-1 text-center p-2 bg-red-50 rounded-xl border border-red-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div className="flex-1 text-center p-2 bg-red-50 dark:bg-red-900 dark:bg-opacity-20 rounded-xl border border-red-200 dark:border-red-700 shadow-sm hover:shadow-md transition-shadow duration-200">
               <div className="w-10 h-10 bg-red-500 rounded-full mx-auto mb-1 flex items-center justify-center text-white font-bold shadow-sm">印</div>
-              <p className="text-sm font-medium text-red-700">红</p>
-              <p className="text-xs text-gray-600 truncate">启动</p>
+              <p className="text-sm font-medium text-red-700 dark:text-red-300">红</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 truncate">启动</p>
             </div>
-            <div className="flex-1 text-center p-2 bg-white rounded-xl border border-gray-300 shadow-sm hover:shadow-md transition-shadow duration-200">
-              <div className="w-10 h-10 bg-white border-2 border-gray-300 rounded-full mx-auto mb-1 flex items-center justify-center text-gray-700 font-bold shadow-sm">风</div>
-              <p className="text-sm font-medium text-gray-700">白</p>
-              <p className="text-xs text-gray-600 truncate">沟通</p>
+            <div className="flex-1 text-center p-2 bg-white dark:bg-gray-700 rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="w-10 h-10 bg-white dark:bg-gray-600 border-2 border-gray-300 dark:border-gray-500 rounded-full mx-auto mb-1 flex items-center justify-center text-gray-700 dark:text-gray-300 font-bold shadow-sm">风</div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">白</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 truncate">沟通</p>
             </div>
-            <div className="flex-1 text-center p-2 bg-blue-50 rounded-xl border border-blue-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div className="flex-1 text-center p-2 bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20 rounded-xl border border-blue-200 dark:border-blue-700 shadow-sm hover:shadow-md transition-shadow duration-200">
               <div className="w-10 h-10 bg-blue-500 rounded-full mx-auto mb-1 flex items-center justify-center text-white font-bold shadow-sm">夜</div>
-              <p className="text-sm font-medium text-blue-700">蓝</p>
-              <p className="text-xs text-gray-600 truncate">直觉</p>
+              <p className="text-sm font-medium text-blue-700 dark:text-blue-300">蓝</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 truncate">直觉</p>
             </div>
-            <div className="flex-1 text-center p-2 bg-yellow-50 rounded-xl border border-yellow-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div className="flex-1 text-center p-2 bg-yellow-50 dark:bg-yellow-900 dark:bg-opacity-20 rounded-xl border border-yellow-200 dark:border-yellow-700 shadow-sm hover:shadow-md transition-shadow duration-200">
               <div className="w-10 h-10 bg-yellow-500 rounded-full mx-auto mb-1 flex items-center justify-center text-white font-bold shadow-sm">种</div>
-              <p className="text-sm font-medium text-yellow-700">黄</p>
-              <p className="text-xs text-gray-600 truncate">觉醒</p>
+              <p className="text-sm font-medium text-yellow-700 dark:text-yellow-300">黄</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 truncate">觉醒</p>
             </div>
-            <div className="flex-1 text-center p-2 bg-green-50 rounded-xl border border-green-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div className="flex-1 text-center p-2 bg-green-50 dark:bg-green-900 dark:bg-opacity-20 rounded-xl border border-green-200 dark:border-green-700 shadow-sm hover:shadow-md transition-shadow duration-200">
               <div className="w-10 h-10 bg-green-500 rounded-full mx-auto mb-1 flex items-center justify-center text-white font-bold shadow-sm">地</div>
-              <p className="text-sm font-medium text-green-700">绿</p>
-              <p className="text-xs text-gray-600 truncate">和谐</p>
+              <p className="text-sm font-medium text-green-700 dark:text-green-300">绿</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 truncate">和谐</p>
             </div>
           </div>
         </div>
       </div>
       
       {/* 日期选择区域 */}
-      <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 border border-gray-200 dark:border-gray-700">
         <div className="flex flex-col sm:flex-row items-center justify-between mb-4">
           <div className="mb-4 sm:mb-0 w-full sm:w-auto">
-            <h3 className="text-lg font-medium flex items-center">
+            <h3 className="text-lg font-medium flex items-center text-gray-900 dark:text-white">
               <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
               选择日期
             </h3>
-            <p className="text-sm text-gray-500 mt-1 whitespace-nowrap overflow-hidden text-ellipsis">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 whitespace-nowrap overflow-hidden text-ellipsis">
               点击标签快速切换
             </p>
           </div>
           <div className="inline-flex items-center w-full sm:w-auto justify-end">
-            <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+            <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden shadow-sm">
               <DatePicker
                 selected={selectedDate}
                 onChange={handleDateChange}
                 dateFormat="yyyy-MM-dd"
-                className="px-2 py-1 focus:outline-none text-center text-sm w-24 border-0"
+                className="px-2 py-1 focus:outline-none text-center text-sm w-24 border-0 dark:bg-gray-700 dark:text-white"
               />
               <button
                 onClick={() => handleDateChange(new Date())}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 text-sm border-l border-blue-600"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 text-sm border-l border-blue-600 dark:border-blue-700"
               >
                 今日
               </button>
@@ -709,7 +709,7 @@ return (
         {/* 历史记录 */}
         {historyDates.length > 0 && (
           <div className="mb-4">
-            <h4 className="text-sm font-medium text-gray-500 mb-2 flex items-center">
+            <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 flex items-center">
               <span className="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
               历史查询记录
             </h4>
@@ -721,7 +721,7 @@ return (
                   className={`px-3 py-1 text-sm rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md ${
                     selectedMayaInfo && selectedMayaInfo.date === dateStr
                       ? "bg-blue-500 text-white border border-blue-600"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600"
                   }`}
                 >
                   {dateStr}
@@ -732,7 +732,7 @@ return (
         )}
         
         {/* 日期快速选择标签 - 固定显示7天 */}
-        <div className="flex border border-gray-300 rounded-xl overflow-hidden shadow-sm">
+        <div className="flex border border-gray-300 dark:border-gray-600 rounded-xl overflow-hidden shadow-sm">
           {mayaInfoList.slice(0, 7).map((info, index) => (
             <div
               key={index}
@@ -740,8 +740,8 @@ return (
               onClick={() => handleDateChange(new Date(info.date))}
               style={{ width: `${100 / 7}%` }}
             >
-              <div className="text-xs opacity-75">{info.weekday.replace('星期', '')}</div>
-              <div className="font-medium">{MayaCalendarUtils.formatDate(info.date)}</div>
+              <div className="text-xs opacity-75 dark:text-gray-300">{info.weekday.replace('星期', '')}</div>
+              <div className="font-medium dark:text-white">{MayaCalendarUtils.formatDate(info.date)}</div>
               {new Date().toISOString().split('T')[0] === info.date && (
                 <div className="flex items-center justify-center mt-1">
                   <span className="inline-block w-2 h-2 bg-current rounded-full"></span>
@@ -752,12 +752,12 @@ return (
         </div>
         
         {/* 调试信息 */}
-        <div className="mt-2 text-xs text-gray-400 text-center">
+        <div className="mt-2 text-xs text-gray-400 dark:text-gray-500 text-center">
           调试信息: 总数据量 {mayaInfoList.length}天, 显示前7天
         </div>
         
         {/* 提示信息 */}
-        <div className="mt-2 text-xs text-gray-500 text-center whitespace-nowrap overflow-hidden text-ellipsis">
+        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center whitespace-nowrap overflow-hidden text-ellipsis">
           快速选择标签显示最近7天，使用日期选择器查看任意日期
         </div>
       </div>
@@ -766,9 +766,9 @@ return (
         {/* 左侧：玛雅日历详细信息 */}
         <div>
           {/* 玛雅日历基本信息 - 增强视觉效果 */}
-          <div className="mb-6 bg-gradient-to-br from-blue-100 to-purple-100 p-6 rounded-xl shadow-lg border border-blue-200">
+          <div className="mb-6 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 p-6 rounded-xl shadow-lg border border-blue-200 dark:border-blue-700">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium flex items-center">
+              <h3 className="text-lg font-medium flex items-center text-gray-900 dark:text-white">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
                 {selectedMayaInfo.date} {selectedMayaInfo.weekday}
               </h3>
@@ -780,16 +780,16 @@ return (
             <div className="flex flex-col items-center justify-center mb-4">
               <div className="w-24 h-24 bg-yellow-400 rounded-xl flex items-center justify-center mb-3 shadow-lg border border-yellow-500">
                 <div className="text-center">
-                  <div className="text-3xl font-bold">{selectedMayaInfo.maya_kin}</div>
+                  <div className="text-3xl font-bold text-gray-900">{selectedMayaInfo.maya_kin}</div>
                 </div>
               </div>
-              <h2 className="text-xl font-bold text-center">{selectedMayaInfo.maya_seal_desc}</h2>
+              <h2 className="text-xl font-bold text-center text-gray-900 dark:text-white">{selectedMayaInfo.maya_seal_desc}</h2>
             </div>
             
             {/* 每日启示语 */}
-            <div className="mt-4 p-4 bg-white bg-opacity-70 rounded-xl border border-white border-opacity-50 shadow-sm">
-              <p className="text-gray-800 italic text-center">"{selectedMayaInfo.daily_message}"</p>
-              <p className="text-right text-sm mt-2 text-gray-600">
+            <div className="mt-4 p-4 bg-white dark:bg-gray-700 bg-opacity-70 rounded-xl border border-white dark:border-gray-600 border-opacity-50 shadow-sm">
+              <p className="text-gray-800 dark:text-gray-300 italic text-center">"{selectedMayaInfo.daily_message}"</p>
+              <p className="text-right text-sm mt-2 text-gray-600 dark:text-gray-400">
                 —— {selectedMayaInfo.daily_quote.content} · {selectedMayaInfo.daily_quote.author}
               </p>
             </div>
@@ -797,36 +797,36 @@ return (
           
           {/* 建议与禁忌 - 增强视觉效果 */}
           <div className="grid grid-cols-1 gap-4 mb-6">
-            <div className="bg-green-50 p-4 rounded-xl shadow-lg border border-green-200 hover:shadow-xl transition-shadow duration-200">
+            <div className="bg-green-50 dark:bg-green-900 dark:bg-opacity-20 p-4 rounded-xl shadow-lg border border-green-200 dark:border-green-700 hover:shadow-xl transition-shadow duration-200">
               <div className="flex items-center mb-2">
                 <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white mr-2 shadow-sm">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
                   </svg>
                 </div>
-                <h4 className="font-medium text-green-700">今日宜</h4>
+                <h4 className="font-medium text-green-700 dark:text-green-300">今日宜</h4>
               </div>
               <ul className="space-y-1 ml-8">
                 {suggestions.建议.map((item, index) => (
-                  <li key={index} className="text-gray-700 flex items-start">
+                  <li key={index} className="text-gray-700 dark:text-gray-300 flex items-start">
                     <span className="w-1.5 h-1.5 bg-green-400 rounded-full mt-1.5 mr-2 flex-shrink-0"></span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 p-4 rounded-xl shadow-lg border border-red-200 hover:shadow-xl transition-shadow duration-200">
+            <div className="bg-red-50 dark:bg-red-900 dark:bg-opacity-20 p-4 rounded-xl shadow-lg border border-red-200 dark:border-red-700 hover:shadow-xl transition-shadow duration-200">
               <div className="flex items-center mb-2">
                 <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white mr-2 shadow-sm">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path>
                   </svg>
                 </div>
-                <h4 className="font-medium text-red-700">今日忌</h4>
+                <h4 className="font-medium text-red-700 dark:text-red-300">今日忌</h4>
               </div>
               <ul className="space-y-1 ml-8">
                 {suggestions.避免.map((item, index) => (
-                  <li key={index} className="text-gray-700 flex items-start">
+                  <li key={index} className="text-gray-700 dark:text-gray-300 flex items-start">
                     <span className="w-1.5 h-1.5 bg-red-400 rounded-full mt-1.5 mr-2 flex-shrink-0"></span>
                     <span>{item}</span>
                   </li>
@@ -835,35 +835,35 @@ return (
             </div>
             
             {/* 每日指引卡片 - 移动到左侧每日禁忌下方 */}
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-l-4 border-purple-500 rounded-xl p-4 shadow-lg border border-purple-200">
-              <h3 className="text-lg font-medium mb-3 flex items-center">
+            <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900 dark:to-blue-900 border-l-4 border-purple-500 dark:border-purple-400 rounded-xl p-4 shadow-lg border border-purple-200 dark:border-purple-700">
+              <h3 className="text-lg font-medium mb-3 flex items-center text-gray-900 dark:text-white">
                 <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
                 每日指引
               </h3>
               
               <div className="grid grid-cols-1 gap-3">
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-3 shadow-sm">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900 dark:to-indigo-900 border border-blue-200 dark:border-blue-700 rounded-xl p-3 shadow-sm">
                   <div className="flex items-center mb-2">
                     <span className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2 shadow-sm">晨</span>
-                    <span className="font-medium text-blue-800">早晨指引</span>
+                    <span className="font-medium text-blue-800 dark:text-blue-300">早晨指引</span>
                   </div>
-                  <p className="text-sm text-blue-700 leading-relaxed">{dailyGuidance.morning}</p>
+                  <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed">{dailyGuidance.morning}</p>
                 </div>
                 
-                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 border border-orange-200 rounded-xl p-3 shadow-sm">
+                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-900 dark:to-yellow-900 border border-orange-200 dark:border-orange-700 rounded-xl p-3 shadow-sm">
                   <div className="flex items-center mb-2">
                     <span className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2 shadow-sm">午</span>
-                    <span className="font-medium text-orange-800">下午指引</span>
+                    <span className="font-medium text-orange-800 dark:text-orange-300">下午指引</span>
                   </div>
-                  <p className="text-sm text-orange-700 leading-relaxed">{dailyGuidance.afternoon}</p>
+                  <p className="text-sm text-orange-700 dark:text-orange-300 leading-relaxed">{dailyGuidance.afternoon}</p>
                 </div>
                 
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-3 shadow-sm">
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900 dark:to-pink-900 border border-purple-200 dark:border-purple-700 rounded-xl p-3 shadow-sm">
                   <div className="flex items-center mb-2">
                     <span className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2 shadow-sm">晚</span>
-                    <span className="font-medium text-purple-800">夜晚指引</span>
+                    <span className="font-medium text-purple-800 dark:text-purple-300">夜晚指引</span>
                   </div>
-                  <p className="text-sm text-purple-700 leading-relaxed">{dailyGuidance.evening}</p>
+                  <p className="text-sm text-purple-700 dark:text-purple-300 leading-relaxed">{dailyGuidance.evening}</p>
                 </div>
               </div>
             </div>
@@ -884,11 +884,11 @@ return (
                               
             return (
               <div className="mb-6">
-                <h3 className="text-lg font-medium mb-3">今日能量分数</h3>
-                <div className={`${energyInfo.bgColor} p-4 rounded-xl border ${energyInfo.borderColor} shadow-lg hover:shadow-xl transition-shadow duration-200`}>
+                <h3 className="text-lg font-medium mb-3 text-gray-900 dark:text-white">今日能量分数</h3>
+                <div className={`${energyInfo.bgColor} dark:bg-opacity-20 p-4 rounded-xl border ${energyInfo.borderColor} dark:border-opacity-30 shadow-lg hover:shadow-xl transition-shadow duration-200`}>
                   <div className="flex items-center justify-between mb-4">
                     <h4 className={`font-bold ${energyInfo.textColor}`}>能量等级: <span className="text-lg">{energyInfo.level}</span></h4>
-                    <div className={`px-3 py-1 bg-white rounded-full ${energyInfo.textColor} text-sm border ${energyInfo.borderColor} shadow-sm`}>
+                    <div className={`px-3 py-1 bg-white dark:bg-gray-700 rounded-full ${energyInfo.textColor} text-sm border ${energyInfo.borderColor} dark:border-opacity-30 shadow-sm`}>
                       {energyScore}/100
                     </div>
                   </div>
@@ -917,11 +917,11 @@ return (
                   </div>
                   
                   {/* 能量分数总结提示 */}
-                  <div className="mb-4 p-3 bg-white rounded-xl shadow-inner border border-gray-200">
+                  <div className="mb-4 p-3 bg-white dark:bg-gray-700 rounded-xl shadow-inner border border-gray-200 dark:border-gray-600">
                     <p className={`text-sm ${energyInfo.textColor}`}>
                       {energyInfo.tip}
                     </p>
-                    <p className="text-xs text-gray-500 mt-2 italic">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 italic">
                       {energyInfo.suggestion}
                     </p>
                   </div>
@@ -936,9 +936,9 @@ return (
                       
                       return (
                         <div key={key} className="text-center">
-                          <div className="text-lg font-semibold">{value}</div>
-                          <div className="text-xs text-gray-600">{key}</div>
-                          <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                          <div className="text-lg font-semibold text-gray-900 dark:text-white">{value}</div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400">{key}</div>
+                          <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mt-1">
                             <div
                               className={`${itemColor} h-2 rounded-full`}
                               style={{ width: `${value}%` }}
@@ -955,7 +955,7 @@ return (
           
           {/* 幸运物品 - 增强视觉效果 */}
           <div>
-            <h3 className="text-lg font-medium mb-3 flex items-center">
+            <h3 className="text-lg font-medium mb-3 flex items-center text-gray-900 dark:text-white">
               <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
               今日幸运物品
             </h3>
@@ -970,10 +970,10 @@ return (
                   [colorName + '色', colorName + '调', colorName + '韵'];
                 
                 return (
-                  <div className={`mb-4 ${colorInfo.bgColor} p-4 rounded-xl border ${colorInfo.borderColor} shadow-lg hover:shadow-xl transition-shadow duration-200`}>
+                  <div className={`mb-4 ${colorInfo.bgColor} dark:bg-opacity-20 p-4 rounded-xl border ${colorInfo.borderColor} dark:border-opacity-30 shadow-lg hover:shadow-xl transition-shadow duration-200`}>
                     <div className="flex items-center mb-3">
                       <div 
-                        className="w-10 h-10 rounded-full mr-3 flex-shrink-0 shadow-inner border border-white" 
+                        className="w-10 h-10 rounded-full mr-3 flex-shrink-0 shadow-inner border border-white dark:border-gray-700" 
                         style={{ background: `linear-gradient(135deg, ${colorInfo.colorHex}, ${colorInfo.colorHex})` }}
                       ></div>
                       <h4 className={`text-lg font-bold ${colorInfo.textColor}`}>{colorName}</h4>
@@ -981,12 +981,12 @@ return (
                     <div className="ml-2">
                       <div className="flex flex-wrap mb-2">
                         {colorVariants.map((variant, idx) => (
-                          <span key={idx} className={`mr-2 mb-2 px-3 py-1 bg-white ${colorInfo.textColor} rounded-lg text-sm border ${colorInfo.borderColor} shadow-sm`}>
+                          <span key={idx} className={`mr-2 mb-2 px-3 py-1 bg-white dark:bg-gray-700 ${colorInfo.textColor} rounded-lg text-sm border ${colorInfo.borderColor} dark:border-opacity-30 shadow-sm`}>
                             {variant}
                           </span>
                         ))}
                       </div>
-                      <p className="text-sm text-gray-700">
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
                         于当日五行相同，吉相宜。今日若身着此类衣物配饰，有助于提升个人气场。
                       </p>
                       <p className={`text-xs ${colorInfo.textColor} mt-2 italic`}>
@@ -1010,9 +1010,9 @@ return (
                 ];
                 
                 return (
-                  <div className={`mb-4 ${numberInfo.bgColor} p-4 rounded-xl border ${numberInfo.borderColor} shadow-lg hover:shadow-xl transition-shadow duration-200`}>
+                  <div className={`mb-4 ${numberInfo.bgColor} dark:bg-opacity-20 p-4 rounded-xl border ${numberInfo.borderColor} dark:border-opacity-30 shadow-lg hover:shadow-xl transition-shadow duration-200`}>
                     <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-3 flex-shrink-0 shadow-sm border border-gray-200">
+                      <div className="w-10 h-10 rounded-full bg-white dark:bg-gray-700 flex items-center justify-center mr-3 flex-shrink-0 shadow-sm border border-gray-200 dark:border-gray-600">
                         <span className="text-2xl">{numberInfo.emoji}</span>
                       </div>
                       <h4 className={`text-lg font-bold ${numberInfo.textColor}`}>数字 {luckyNumber}</h4>
@@ -1020,12 +1020,12 @@ return (
                     <div className="ml-2">
                       <div className="flex flex-wrap mb-2">
                         {numberCombinations.map((combo, idx) => (
-                          <span key={idx} className={`mr-2 mb-2 px-3 py-1 bg-white ${numberInfo.textColor} rounded-lg text-sm border ${numberInfo.borderColor} shadow-sm`}>
+                          <span key={idx} className={`mr-2 mb-2 px-3 py-1 bg-white dark:bg-gray-700 ${numberInfo.textColor} rounded-lg text-sm border ${numberInfo.borderColor} dark:border-opacity-30 shadow-sm`}>
                             {combo}
                           </span>
                         ))}
                       </div>
-                      <p className="text-sm text-gray-700">
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
                         {numberInfo.meaning}
                       </p>
                       <p className={`text-xs ${numberInfo.textColor} mt-2 italic`}>
@@ -1042,18 +1042,18 @@ return (
                 const luckyFood = luckyItems.幸运食物;
                 
                 return (
-                  <div className={`mb-4 ${foodInfo.bgColor} p-4 rounded-xl border ${foodInfo.borderColor} shadow-lg hover:shadow-xl transition-shadow duration-200`}>
+                  <div className={`mb-4 ${foodInfo.bgColor} dark:bg-opacity-20 p-4 rounded-xl border ${foodInfo.borderColor} dark:border-opacity-30 shadow-lg hover:shadow-xl transition-shadow duration-200`}>
                     <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-3 flex-shrink-0 shadow-sm border border-gray-200">
+                      <div className="w-10 h-10 rounded-full bg-white dark:bg-gray-700 flex items-center justify-center mr-3 flex-shrink-0 shadow-sm border border-gray-200 dark:border-gray-600">
                         <span className="text-2xl">{foodInfo.emoji}</span>
                       </div>
                       <h4 className={`text-lg font-bold ${foodInfo.textColor}`}>{luckyFood}</h4>
                     </div>
                     <div className="ml-2">
-                      <div className={`inline-block mb-2 px-3 py-1 bg-white ${foodInfo.textColor} rounded-lg text-sm border ${foodInfo.borderColor} shadow-sm`}>
+                      <div className={`inline-block mb-2 px-3 py-1 bg-white dark:bg-gray-700 ${foodInfo.textColor} rounded-lg text-sm border ${foodInfo.borderColor} dark:border-opacity-30 shadow-sm`}>
                         {foodInfo.nutrition}
                       </div>
-                      <p className="text-sm text-gray-700 mt-2">
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mt-2">
                         今日食用此食物能够激活您的幸运磁场，提升运势与表现。
                       </p>
                       <p className={`text-xs ${foodInfo.textColor} mt-2 italic`}>
@@ -1069,36 +1069,36 @@ return (
       </div>
       
       {/* 玛雅启示语录 */}
-      <div className="mt-8 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6 border-t border-purple-100">
-        <h3 className="text-lg font-medium mb-4 text-center text-purple-800">玛雅启示语录</h3>
+      <div className="mt-8 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900 dark:to-purple-900 rounded-lg p-6 border-t border-purple-100 dark:border-purple-800">
+        <h3 className="text-lg font-medium mb-4 text-center text-purple-800 dark:text-purple-300">玛雅启示语录</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white bg-opacity-70 rounded-lg p-4 shadow-sm border border-purple-100">
-            <p className="text-gray-700 italic">
+          <div className="bg-white dark:bg-gray-700 bg-opacity-70 rounded-lg p-4 shadow-sm border border-purple-100 dark:border-purple-800">
+            <p className="text-gray-700 dark:text-gray-300 italic">
               "时间不是线性的，而是螺旋状的。过去、现在和未来交织在一起，形成了我们生命的织锦。"
             </p>
-            <p className="text-right text-sm mt-2 text-purple-600">— 玛雅智者</p>
+            <p className="text-right text-sm mt-2 text-purple-600 dark:text-purple-400">— 玛雅智者</p>
           </div>
-          <div className="bg-white bg-opacity-70 rounded-lg p-4 shadow-sm border border-purple-100">
-            <p className="text-gray-700 italic">
+          <div className="bg-white dark:bg-gray-700 bg-opacity-70 rounded-lg p-4 shadow-sm border border-purple-100 dark:border-purple-800">
+            <p className="text-gray-700 dark:text-gray-300 italic">
               "每一天都是一个独特的能量门户，通过它我们可以连接宇宙的智慧和力量。"
             </p>
-            <p className="text-right text-sm mt-2 text-purple-600">— 玛雅历法</p>
+            <p className="text-right text-sm mt-2 text-purple-600 dark:text-purple-400">— 玛雅历法</p>
           </div>
-          <div className="bg-white bg-opacity-70 rounded-lg p-4 shadow-sm border border-purple-100">
-            <p className="text-gray-700 italic">
+          <div className="bg-white dark:bg-gray-700 bg-opacity-70 rounded-lg p-4 shadow-sm border border-purple-100 dark:border-purple-800">
+            <p className="text-gray-700 dark:text-gray-300 italic">
               "我们不是在地球上生活，而是与地球共同生活。尊重自然的节奏，就是尊重自己的生命。"
             </p>
-            <p className="text-right text-sm mt-2 text-purple-600">— 玛雅古训</p>
+            <p className="text-right text-sm mt-2 text-purple-600 dark:text-purple-400">— 玛雅古训</p>
           </div>
-          <div className="bg-white bg-opacity-70 rounded-lg p-4 shadow-sm border border-purple-100">
-            <p className="text-gray-700 italic">
+          <div className="bg-white dark:bg-gray-700 bg-opacity-70 rounded-lg p-4 shadow-sm border border-purple-100 dark:border-purple-800">
+            <p className="text-gray-700 dark:text-gray-300 italic">
               "真正的力量不在于控制外界，而在于掌握内心的平衡与和谐。"
             </p>
-            <p className="text-right text-sm mt-2 text-purple-600">— 玛雅哲学</p>
+            <p className="text-right text-sm mt-2 text-purple-600 dark:text-purple-400">— 玛雅哲学</p>
           </div>
         </div>
-        <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-r-lg">
-          <p className="text-purple-800 text-sm leading-relaxed">
+        <div className="bg-purple-50 dark:bg-purple-900 dark:bg-opacity-30 border-l-4 border-purple-500 dark:border-purple-400 p-4 rounded-r-lg mt-4">
+          <p className="text-purple-800 dark:text-purple-300 text-sm leading-relaxed">
             <strong>玛雅日历原理：</strong> 玛雅日历是基于宇宙能量周期的古老智慧系统，通过20个太阳印记和13个银河音阶的组合，形成260天的神圣周期。每个印记代表特定的能量特质，音阶则对应宇宙振动的频率，共同构成了人类与宇宙能量同步的密码。
           </p>
         </div>
