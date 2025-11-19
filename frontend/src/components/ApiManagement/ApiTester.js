@@ -57,23 +57,23 @@ const ApiTester = ({ endpoint }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-medium mb-4">测试 {endpoint.method} {endpoint.path}</h3>
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+      <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-white">测试 {endpoint.method} {endpoint.path}</h3>
       
       {/* 参数输入 */}
       {endpoint.parameters && endpoint.parameters.length > 0 && (
         <div className="mb-4">
-          <h4 className="text-md font-medium mb-2">参数</h4>
+          <h4 className="text-md font-medium mb-2 text-gray-900 dark:text-white">参数</h4>
           <div className="space-y-3">
             {endpoint.parameters.map((param, index) => (
               <div key={index}>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   {param.name} {param.required && <span className="text-red-500">*</span>}
-                  {param.type && <span className="text-xs text-gray-500 ml-2">({param.type})</span>}
+                  {param.type && <span className="text-xs text-gray-500 ml-2 dark:text-gray-400">({param.type})</span>}
                 </label>
                 <input
                   type="text"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                   value={params[param.name] || ''}
                   onChange={(e) => handleParamChange(param.name, e.target.value)}
                   placeholder={param.description || param.name}
@@ -88,7 +88,7 @@ const ApiTester = ({ endpoint }) => {
       <button
         onClick={handleTest}
         disabled={loading}
-        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 dark:bg-indigo-500 dark:hover:bg-indigo-600"
       >
         {loading ? '测试中...' : '发送请求'}
       </button>
@@ -96,9 +96,9 @@ const ApiTester = ({ endpoint }) => {
       {/* 响应显示 */}
       {response && (
         <div className="mt-4">
-          <h4 className="text-md font-medium mb-2">响应</h4>
-          <div className="bg-gray-50 p-4 rounded-md">
-            <pre className="text-sm text-gray-800 overflow-x-auto">
+          <h4 className="text-md font-medium mb-2 text-gray-900 dark:text-white">响应</h4>
+          <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
+            <pre className="text-sm text-gray-800 dark:text-gray-200 overflow-x-auto">
               {JSON.stringify(response, null, 2)}
             </pre>
           </div>
@@ -108,9 +108,9 @@ const ApiTester = ({ endpoint }) => {
       {/* 错误显示 */}
       {error && (
         <div className="mt-4">
-          <h4 className="text-md font-medium mb-2">错误</h4>
-          <div className="bg-red-50 p-4 rounded-md">
-            <p className="text-sm text-red-800">{error}</p>
+          <h4 className="text-md font-medium mb-2 text-gray-900 dark:text-white">错误</h4>
+          <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-md">
+            <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
           </div>
         </div>
       )}

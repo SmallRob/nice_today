@@ -4,6 +4,7 @@ import ServiceStatusDashboard from './ServiceStatusDashboard';
 import ApiManagementLogin from './ApiManagementLogin';
 import ApiDocsViewer from '../ApiDocsViewer/ApiDocsViewer';
 import ApiManagementPage from '../../pages/ApiManagementPage';
+import DarkModeToggle from '../DarkModeToggle'; // 添加导入
 
 const ApiManagementNavigation = () => {
   const [activeTab, setActiveTab] = useState('endpoints');
@@ -69,10 +70,10 @@ const ApiManagementNavigation = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">加载中...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">加载中...</p>
         </div>
       </div>
     );
@@ -83,14 +84,14 @@ const ApiManagementNavigation = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* 导航栏 */}
-      <nav className="bg-white shadow-sm">
+      <nav className="bg-white dark:bg-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold text-gray-900">API管理面板</h1>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">API管理面板</h1>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 {tabs.map((tab) => (
@@ -99,8 +100,8 @@ const ApiManagementNavigation = () => {
                     onClick={() => setActiveTab(tab.id)}
                     className={`${
                       activeTab === tab.id
-                        ? 'border-indigo-500 text-gray-900'
-                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                        ? 'border-indigo-500 text-gray-900 dark:text-white'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white'
                     } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
                   >
                     {tab.label}
@@ -109,9 +110,10 @@ const ApiManagementNavigation = () => {
               </div>
             </div>
             <div className="flex items-center">
+              <DarkModeToggle /> {/* 添加深色模式切换按钮 */}
               <button
                 onClick={handleLogout}
-                className="ml-4 px-3 py-1 text-sm text-gray-600 hover:text-gray-900"
+                className="ml-4 px-3 py-1 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
               >
                 登出
               </button>

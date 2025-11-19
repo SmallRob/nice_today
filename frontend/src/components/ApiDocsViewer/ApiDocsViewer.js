@@ -75,38 +75,38 @@ const ApiDocsViewer = () => {
   }, []);
 
   if (loading) {
-    return <div className="p-4">加载中...</div>;
+    return <div className="p-4 text-gray-700 dark:text-gray-300">加载中...</div>;
   }
 
   if (error) {
-    return <div className="p-4 text-red-500">错误: {error}</div>;
+    return <div className="p-4 text-red-500 dark:text-red-400">错误: {error}</div>;
   }
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">API文档</h1>
+      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">API文档</h1>
       
       <div className="flex flex-col lg:flex-row gap-6">
         {/* 文档列表侧边栏 */}
         <div className="lg:w-1/4">
-          <div className="bg-white rounded-lg shadow-md p-4">
-            <h2 className="text-lg font-semibold mb-4">文档列表</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">文档列表</h2>
             <div className="space-y-2">
               {docs.map((doc, index) => (
                 <button
                   key={index}
                   className={`w-full text-left px-3 py-2 rounded-md text-sm ${
                     selectedDoc?.id === doc.id
-                      ? 'bg-indigo-100 text-indigo-800'
-                      : 'hover:bg-gray-100'
+                      ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-200'
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 dark:text-gray-300'
                   }`}
                   onClick={() => {
                     setSelectedDoc(doc);
                     setViewMode('json'); // 默认显示JSON视图
                   }}
                 >
-                  <div className="font-medium">{doc.title}</div>
-                  <div className="text-xs text-gray-500">版本: {doc.version}</div>
+                  <div className="font-medium text-gray-900 dark:text-white">{doc.title}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">版本: {doc.version}</div>
                 </button>
               ))}
             </div>
@@ -116,17 +116,17 @@ const ApiDocsViewer = () => {
         {/* 文档详情区域 */}
         <div className="lg:w-3/4">
           {selectedDoc ? (
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
               <div className="mb-6">
-                <h2 className="text-xl font-bold">{selectedDoc.title}</h2>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">{selectedDoc.title}</h2>
                 <div className="flex items-center mt-2">
-                  <span className="text-sm text-gray-600">版本: {selectedDoc.version}</span>
-                  <span className="mx-2 text-gray-300">•</span>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-gray-600 dark:text-gray-300">版本: {selectedDoc.version}</span>
+                  <span className="mx-2 text-gray-300 dark:text-gray-600">•</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">
                     更新时间: {new Date(selectedDoc.updatedAt).toLocaleString()}
                   </span>
                 </div>
-                <p className="mt-3 text-gray-700">{selectedDoc.description}</p>
+                <p className="mt-3 text-gray-700 dark:text-gray-300">{selectedDoc.description}</p>
               </div>
 
               {/* 视图切换按钮 */}
@@ -135,7 +135,7 @@ const ApiDocsViewer = () => {
                   className={`px-4 py-2 rounded-l-md ${
                     viewMode === 'json'
                       ? 'bg-indigo-600 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                   }`}
                   onClick={() => setViewMode('json')}
                 >
@@ -145,7 +145,7 @@ const ApiDocsViewer = () => {
                   className={`px-4 py-2 rounded-r-md ${
                     viewMode === 'swagger'
                       ? 'bg-indigo-600 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                   }`}
                   onClick={() => setViewMode('swagger')}
                 >
@@ -154,28 +154,28 @@ const ApiDocsViewer = () => {
               </div>
 
               {/* 文档内容 */}
-              <div className="border border-gray-200 rounded-lg">
-                <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-                  <h3 className="font-medium">
+              <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
+                <div className="bg-gray-50 dark:bg-gray-700 px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="font-medium text-gray-900 dark:text-white">
                     {viewMode === 'json' ? 'API文档详情' : 'Swagger UI视图'}
                   </h3>
                 </div>
                 <div className="p-4">
                   {viewMode === 'json' ? (
                     selectedDoc.openApiSpec ? (
-                      <pre className="text-sm text-gray-800 overflow-x-auto bg-gray-50 p-4 rounded">
+                      <pre className="text-sm text-gray-800 dark:text-gray-200 overflow-x-auto bg-gray-50 dark:bg-gray-700 p-4 rounded">
                         {JSON.stringify(selectedDoc.openApiSpec, null, 2)}
                       </pre>
                     ) : (
-                      <p className="text-gray-500">暂无详细文档信息</p>
+                      <p className="text-gray-500 dark:text-gray-400">暂无详细文档信息</p>
                     )
                   ) : (
                     <div className="text-center">
-                      <p className="mb-4 text-gray-600">
+                      <p className="mb-4 text-gray-600 dark:text-gray-300">
                         点击下方按钮在新窗口中查看完整的Swagger UI文档
                       </p>
                       <button 
-                        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600"
                         onClick={() => {
                           // 打开Swagger UI页面
                           const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001';
@@ -192,7 +192,7 @@ const ApiDocsViewer = () => {
               {/* 测试按钮 */}
               <div className="mt-6">
                 <button
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600"
                   onClick={() => alert('跳转到API测试页面')}
                 >
                   测试此API
@@ -200,13 +200,13 @@ const ApiDocsViewer = () => {
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow-md p-12 text-center">
-              <div className="text-gray-400">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center">
+              <div className="text-gray-400 dark:text-gray-500">
                 <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <h3 className="mt-2 text-lg font-medium">未选择文档</h3>
-                <p className="mt-1 text-sm">请从左侧列表中选择一个API文档</p>
+                <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-white">未选择文档</h3>
+                <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">请从左侧列表中选择一个API文档</p>
               </div>
             </div>
           )}

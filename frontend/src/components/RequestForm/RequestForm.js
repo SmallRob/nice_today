@@ -76,8 +76,8 @@ const RequestForm = ({ endpoint, onTest }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-medium mb-4">API测试</h3>
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+      <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-white">API测试</h3>
       
       <form onSubmit={handleSubmit}>
         {/* 请求方法和URL */}
@@ -86,7 +86,7 @@ const RequestForm = ({ endpoint, onTest }) => {
             <select
               value={method}
               onChange={(e) => setMethod(e.target.value)}
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
             >
               <option value="GET">GET</option>
               <option value="POST">POST</option>
@@ -101,7 +101,7 @@ const RequestForm = ({ endpoint, onTest }) => {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://api.example.com/endpoint"
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
               required
             />
           </div>
@@ -110,11 +110,11 @@ const RequestForm = ({ endpoint, onTest }) => {
         {/* 查询参数 */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
-            <h4 className="text-md font-medium">查询参数</h4>
+            <h4 className="text-md font-medium text-gray-900 dark:text-white">查询参数</h4>
             <button
               type="button"
               onClick={addParam}
-              className="text-sm text-indigo-600 hover:text-indigo-800"
+              className="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300"
             >
               + 添加参数
             </button>
@@ -128,7 +128,7 @@ const RequestForm = ({ endpoint, onTest }) => {
                     value={param.key}
                     onChange={(e) => handleParamChange(index, 'key', e.target.value)}
                     placeholder="参数名"
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                   />
                 </div>
                 <div className="col-span-6">
@@ -137,14 +137,14 @@ const RequestForm = ({ endpoint, onTest }) => {
                     value={param.value}
                     onChange={(e) => handleParamChange(index, 'value', e.target.value)}
                     placeholder="参数值"
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                   />
                 </div>
                 <div className="col-span-1">
                   <button
                     type="button"
                     onClick={() => removeParam(index)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                     disabled={params.length <= 1}
                   >
                     ×
@@ -158,11 +158,11 @@ const RequestForm = ({ endpoint, onTest }) => {
         {/* 请求头 */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
-            <h4 className="text-md font-medium">请求头</h4>
+            <h4 className="text-md font-medium text-gray-900 dark:text-white">请求头</h4>
             <button
               type="button"
               onClick={addHeader}
-              className="text-sm text-indigo-600 hover:text-indigo-800"
+              className="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300"
             >
               + 添加请求头
             </button>
@@ -176,7 +176,7 @@ const RequestForm = ({ endpoint, onTest }) => {
                     value={header.key}
                     onChange={(e) => handleHeaderChange(index, 'key', e.target.value)}
                     placeholder="Header Key"
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                   />
                 </div>
                 <div className="col-span-6">
@@ -185,14 +185,14 @@ const RequestForm = ({ endpoint, onTest }) => {
                     value={header.value}
                     onChange={(e) => handleHeaderChange(index, 'value', e.target.value)}
                     placeholder="Header Value"
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                   />
                 </div>
                 <div className="col-span-1">
                   <button
                     type="button"
                     onClick={() => removeHeader(index)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                     disabled={headers.length <= 1}
                   >
                     ×
@@ -206,13 +206,13 @@ const RequestForm = ({ endpoint, onTest }) => {
         {/* 请求体 */}
         {method !== 'GET' && (
           <div className="mb-4">
-            <h4 className="text-md font-medium mb-2">请求体</h4>
+            <h4 className="text-md font-medium mb-2 text-gray-900 dark:text-white">请求体</h4>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder='{"key": "value"}'
               rows={6}
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
+              className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono dark:bg-gray-700 dark:text-white"
             />
           </div>
         )}
@@ -220,7 +220,7 @@ const RequestForm = ({ endpoint, onTest }) => {
         {/* 提交按钮 */}
         <button
           type="submit"
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600"
         >
           发送请求
         </button>

@@ -92,11 +92,11 @@ const ApiManagementPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">API管理平台</h1>
-          <p className="mt-2 text-gray-600">查看API文档并在线测试API端点</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">API管理平台</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">查看API文档并在线测试API端点</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
