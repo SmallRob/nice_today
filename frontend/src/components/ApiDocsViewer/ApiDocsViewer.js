@@ -5,6 +5,7 @@ const ApiDocsViewer = () => {
   const [selectedDoc, setSelectedDoc] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [viewMode, setViewMode] = useState('json'); // 'json' or 'swagger'
 
   // 获取API文档列表
   useEffect(() => {
@@ -12,12 +13,60 @@ const ApiDocsViewer = () => {
       try {
         // 使用环境变量配置的API基础URL，如果没有配置则使用默认值
         const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001';
-        const response = await fetch(`${apiBaseUrl}/api/docs`);
-        const data = await response.json();
-        setDocs(data.docs || []);
+        
+        // 首先尝试获取自定义API文档
+        try {
+          const response = await fetch(`${apiBaseUrl}/api/docs`);
+          // 检查响应是否为JSON格式
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            setDocs(data.docs || []);
+          } else {
+            // 如果不是JSON，可能是Swagger UI页面，我们直接使用OpenAPI规范
+            const openapiResponse = await fetch(`${apiBaseUrl}/api/openapi.json`);
+            const openapiData = await openapiResponse.json();
+            
+            // 创建一个默认文档对象
+            const defaultDoc = {
+              id: 'main-api',
+              title: openapiData.info?.title || '统一后端API服务',
+              version: openapiData.info?.version || '1.0.0',
+              description: openapiData.info?.description || 'API文档',
+              openApiSpec: openapiData,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            };
+            
+            setDocs([defaultDoc]);
+          }
+        } catch (customDocErr) {
+          // 如果自定义文档接口失败，尝试获取OpenAPI规范
+          try {
+            const openapiResponse = await fetch(`${apiBaseUrl}/api/openapi.json`);
+            const openapiData = await openapiResponse.json();
+            
+            // 创建一个默认文档对象
+            const defaultDoc = {
+              id: 'main-api',
+              title: openapiData.info?.title || '统一后端API服务',
+              version: openapiData.info?.version || '1.0.0',
+              description: openapiData.info?.description || 'API文档',
+              openApiSpec: openapiData,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            };
+            
+            setDocs([defaultDoc]);
+          } catch (openapiErr) {
+            throw new Error('无法获取API文档');
+          }
+        }
+        
         setLoading(false);
       } catch (err) {
-        setError('获取API文档列表失败');
+        console.error('获取API文档失败:', err);
+        setError('获取API文档列表失败: ' + err.message);
         setLoading(false);
       }
     };
@@ -51,7 +100,10 @@ const ApiDocsViewer = () => {
                       ? 'bg-indigo-100 text-indigo-800'
                       : 'hover:bg-gray-100'
                   }`}
-                  onClick={() => setSelectedDoc(doc)}
+                  onClick={() => {
+                    setSelectedDoc(doc);
+                    setViewMode('json'); // 默认显示JSON视图
+                  }}
                 >
                   <div className="font-medium">{doc.title}</div>
                   <div className="text-xs text-gray-500">版本: {doc.version}</div>
@@ -77,18 +129,62 @@ const ApiDocsViewer = () => {
                 <p className="mt-3 text-gray-700">{selectedDoc.description}</p>
               </div>
 
-              {/* Swagger UI 集成 */}
+              {/* 视图切换按钮 */}
+              <div className="flex mb-4">
+                <button
+                  className={`px-4 py-2 rounded-l-md ${
+                    viewMode === 'json'
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                  onClick={() => setViewMode('json')}
+                >
+                  JSON视图
+                </button>
+                <button
+                  className={`px-4 py-2 rounded-r-md ${
+                    viewMode === 'swagger'
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                  onClick={() => setViewMode('swagger')}
+                >
+                  Swagger UI
+                </button>
+              </div>
+
+              {/* 文档内容 */}
               <div className="border border-gray-200 rounded-lg">
                 <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-                  <h3 className="font-medium">API文档详情</h3>
+                  <h3 className="font-medium">
+                    {viewMode === 'json' ? 'API文档详情' : 'Swagger UI视图'}
+                  </h3>
                 </div>
                 <div className="p-4">
-                  {selectedDoc.openApiSpec ? (
-                    <pre className="text-sm text-gray-800 overflow-x-auto bg-gray-50 p-4 rounded">
-                      {JSON.stringify(selectedDoc.openApiSpec, null, 2)}
-                    </pre>
+                  {viewMode === 'json' ? (
+                    selectedDoc.openApiSpec ? (
+                      <pre className="text-sm text-gray-800 overflow-x-auto bg-gray-50 p-4 rounded">
+                        {JSON.stringify(selectedDoc.openApiSpec, null, 2)}
+                      </pre>
+                    ) : (
+                      <p className="text-gray-500">暂无详细文档信息</p>
+                    )
                   ) : (
-                    <p className="text-gray-500">暂无详细文档信息</p>
+                    <div className="text-center">
+                      <p className="mb-4 text-gray-600">
+                        点击下方按钮在新窗口中查看完整的Swagger UI文档
+                      </p>
+                      <button 
+                        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                        onClick={() => {
+                          // 打开Swagger UI页面
+                          const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001';
+                          window.open(`${apiBaseUrl}/api/docs`, '_blank');
+                        }}
+                      >
+                        在新窗口中打开Swagger UI
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
