@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class', // 添加这行来启用基于class的暗黑模式
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
