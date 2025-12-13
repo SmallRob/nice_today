@@ -3,6 +3,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import BiorhythmChart from './BiorhythmChart';
 import BiorhythmInfo from './BiorhythmInfo';
+import DailySuggestions from './DailySuggestions';
 import { fetchHistoryDates, fetchBiorhythmData } from '../services/apiService';
 import elementConfig from '../config/elementConfig.json';
 
@@ -232,6 +233,11 @@ const BiorhythmTab = ({ apiBaseUrl, apiConnected }) => {
           </div>
           
           <div className="space-y-6">
+            <DailySuggestions 
+              rhythmData={todayData} 
+              birthDate={birthDate ? birthDate.toISOString().split('T')[0] : null} 
+            />
+            
             <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
               <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">生物节律科学依据</h2>
               <BiorhythmInfo 

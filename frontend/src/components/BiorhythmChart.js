@@ -296,7 +296,7 @@ const BiorhythmChart = ({ data }) => {
                 </svg>
               </div>
               <div className="ml-3">
-                <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">今日综合建议</h4>
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">今日综合状态</h4>
                 {totalScore >= 200 ? (
                   <p className="text-sm text-green-700 dark:text-green-300 font-medium">
                     🌟 今天是您的超级黄金日！综合累积值极高，体力、情绪和智力都处于巅峰状态。适合进行重要决策、创造性工作和挑战性活动。充分利用这一天，您可能会有突破性的表现！

@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   rhythmStatusConfig, 
   rhythmTypeConfig, 
   predictionTipConfig, 
-  organRhythmData, 
   biorhythmScienceInfo 
 } from '../config/biorhythmConfig';
+import { fetchOrganRhythmData } from '../services/dataService';
 
 // 节律状态评估函数
 const getRhythmStatus = (value) => {
@@ -190,6 +190,35 @@ const generateMonthlyHighLowData = (birthDate) => {
 };
 
 const BiorhythmInfo = ({ data, title, birthDate }) => {
+  const [organData, setOrganData] = useState([]);
+  const [organLoading, setOrganLoading] = useState(true);
+  const [organError, setOrganError] = useState(null);
+
+  // 加载器官节律数据
+  useEffect(() => {
+    const loadOrganData = async () => {
+      try {
+        setOrganLoading(true);
+        const result = await fetchOrganRhythmData();
+        
+        if (result.success) {
+          setOrganData(result.data);
+        } else {
+          setOrganError(result.error);
+          // 如果加载失败，使用备选数据
+          setOrganData(result.fallbackData || []);
+        }
+      } catch (error) {
+        console.error('加载器官节律数据时出错:', error);
+        setOrganError('无法加载器官节律数据');
+      } finally {
+        setOrganLoading(false);
+      }
+    };
+    
+    loadOrganData();
+  }, []);
+
   if (!data) {
     return (
       <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
@@ -329,60 +358,138 @@ const BiorhythmInfo = ({ data, title, birthDate }) => {
   };
 
   // 渲染24小时人体器官节律表格
-  const render24HourOrganRhythm = () => (
-    <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 border border-gray-100 dark:border-gray-700 mt-8">
-      <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">24小时人体器官节律</h3>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden table-fixed">
-          <thead>
-            <tr className="bg-gradient-to-r from-green-500 to-green-600 text-white">
-              <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[10%]">时间段</th>
-              <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[8%]">部位</th>
-              <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[32%]">说明</th>
-              <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[25%]">建议活动</th>
-              <th className="py-3 px-2 border-b border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[25%]">健康提示</th>
-            </tr>
-          </thead>
-          <tbody>
-            {organRhythmData.map((item, index) => (
-              <tr key={index} 
-                  className={index % 2 === 0 
-                    ? 'bg-green-50 dark:bg-gray-700 hover:bg-green-100 dark:hover:bg-gray-600 transition-colors duration-150' 
-                    : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150'}>
-                <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-900 dark:text-white text-center whitespace-nowrap">{item.timeRange}</td>
-                <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm font-bold text-blue-600 dark:text-blue-400 text-center whitespace-nowrap">{item.organ}</td>
-                <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-300 truncate" title={item.description}>
-                  <div className="max-h-12 overflow-hidden">{item.description}</div>
-                </td>
-                <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-300 truncate" title={item.activities}>
-                  <div className="max-h-12 overflow-hidden">{item.activities}</div>
-                </td>
-                <td className="py-2 px-2 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-300 truncate" title={item.tips}>
-                  <div className="max-h-12 overflow-hidden">{item.tips}</div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      
-      {/* 添加移动端优化视图 */}
-      <div className="md:hidden mt-6">
-        <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">器官节律详情</h4>
-        {organRhythmData.map((item, index) => (
-          <div key={index} className="mb-4 p-3 bg-white dark:bg-gray-700 rounded-lg shadow border border-gray-200 dark:border-gray-600">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-bold bg-green-100 dark:bg-green-900 dark:bg-opacity-30 text-green-800 dark:text-green-300 px-2 py-1 rounded">{item.timeRange}</span>
-              <span className="text-sm font-bold bg-blue-100 dark:bg-blue-900 dark:bg-opacity-30 text-blue-800 dark:text-blue-300 px-2 py-1 rounded">{item.organ}</span>
-            </div>
-            <p className="text-sm text-gray-700 dark:text-gray-300 mb-2"><span className="font-medium">说明：</span>{item.description}</p>
-            <p className="text-sm text-gray-700 dark:text-gray-300 mb-2"><span className="font-medium">建议活动：</span>{item.activities}</p>
-            <p className="text-sm text-gray-700 dark:text-gray-300"><span className="font-medium">健康提示：</span>{item.tips}</p>
+  const render24HourOrganRhythm = () => {
+    if (organLoading) {
+      return (
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 border border-gray-100 dark:border-gray-700 mt-8">
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">24小时人体器官节律</h3>
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto mb-4"></div>
+            <p className="text-gray-500 dark:text-gray-400">正在加载器官节律数据...</p>
           </div>
-        ))}
+        </div>
+      );
+    }
+
+    if (organError) {
+      return (
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 border border-gray-100 dark:border-gray-700 mt-8">
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">24小时人体器官节律</h3>
+          <div className="bg-yellow-50 dark:bg-yellow-900 dark:bg-opacity-30 border-l-4 border-yellow-400 dark:border-yellow-600 p-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-200">数据加载警告</h3>
+                <div className="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                  <p>{organError}</p>
+                  <p className="mt-1">当前显示的是默认数据，建议刷新页面或联系管理员。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* 使用备选数据渲染表格 */}
+          {organData.length > 0 && (
+            <div className="mt-4">
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">备选数据</h4>
+              <div className="overflow-x-auto">
+                <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden table-fixed">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+                      <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[10%]">时间段</th>
+                      <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[8%]">部位</th>
+                      <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[32%]">说明</th>
+                      <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[25%]">建议活动</th>
+                      <th className="py-3 px-2 border-b border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[25%]">健康提示</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {organData.map((item, index) => (
+                      <tr key={index} 
+                          className={index % 2 === 0 
+                            ? 'bg-green-50 dark:bg-gray-700 hover:bg-green-100 dark:hover:bg-gray-600 transition-colors duration-150' 
+                            : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150'}>
+                        <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-900 dark:text-white text-center whitespace-nowrap">{item.timeRange}</td>
+                        <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm font-bold text-blue-600 dark:text-blue-400 text-center whitespace-nowrap">{item.organ}</td>
+                        <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-300 truncate" title={item.description}>
+                          <div className="max-h-12 overflow-hidden">{item.description}</div>
+                        </td>
+                        <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-300 truncate" title={item.activities}>
+                          <div className="max-h-12 overflow-hidden">{item.activities}</div>
+                        </td>
+                        <td className="py-2 px-2 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-300 truncate" title={item.tips}>
+                          <div className="max-h-12 overflow-hidden">{item.tips}</div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 border border-gray-100 dark:border-gray-700 mt-8">
+        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">24小时人体器官节律</h3>
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden table-fixed">
+            <thead>
+              <tr className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+                <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[10%]">时间段</th>
+                <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[8%]">部位</th>
+                <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[32%]">说明</th>
+                <th className="py-3 px-2 border-b border-r border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[25%]">建议活动</th>
+                <th className="py-3 px-2 border-b border-green-400 dark:border-green-500 text-center text-xs font-semibold uppercase tracking-wider w-[25%]">健康提示</th>
+              </tr>
+            </thead>
+            <tbody>
+              {organData.map((item, index) => (
+                <tr key={index} 
+                    className={index % 2 === 0 
+                      ? 'bg-green-50 dark:bg-gray-700 hover:bg-green-100 dark:hover:bg-gray-600 transition-colors duration-150' 
+                      : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150'}>
+                  <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-900 dark:text-white text-center whitespace-nowrap">{item.timeRange}</td>
+                  <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm font-bold text-blue-600 dark:text-blue-400 text-center whitespace-nowrap">{item.organ}</td>
+                  <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-300 truncate" title={item.description}>
+                    <div className="max-h-12 overflow-hidden">{item.description}</div>
+                  </td>
+                  <td className="py-2 px-2 border-b border-r border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-300 truncate" title={item.activities}>
+                    <div className="max-h-12 overflow-hidden">{item.activities}</div>
+                  </td>
+                  <td className="py-2 px-2 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-300 truncate" title={item.tips}>
+                    <div className="max-h-12 overflow-hidden">{item.tips}</div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        
+        {/* 添加移动端优化视图 */}
+        <div className="md:hidden mt-6">
+          <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">器官节律详情</h4>
+          {organData.map((item, index) => (
+            <div key={index} className="mb-4 p-3 bg-white dark:bg-gray-700 rounded-lg shadow border border-gray-200 dark:border-gray-600">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-bold bg-green-100 dark:bg-green-900 dark:bg-opacity-30 text-green-800 dark:text-green-300 px-2 py-1 rounded">{item.timeRange}</span>
+                <span className="text-sm font-bold bg-blue-100 dark:bg-blue-900 dark:bg-opacity-30 text-blue-800 dark:text-blue-300 px-2 py-1 rounded">{item.organ}</span>
+              </div>
+              <p className="text-sm text-gray-700 dark:text-gray-300 mb-2"><span className="font-medium">说明：</span>{item.description}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 mb-2"><span className="font-medium">建议活动：</span>{item.activities}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300"><span className="font-medium">健康提示：</span>{item.tips}</p>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // 渲染节律信息卡片（优化手机屏幕显示）
   const renderRhythmCards = (rhythmData) => (
